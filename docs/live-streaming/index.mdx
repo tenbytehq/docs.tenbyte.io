@@ -1,0 +1,79 @@
+---
+title: 'Live Streaming Knowledge Base'
+icon: 'radio'
+sidebarTitle: 'What is Live Streaming?'
+---
+
+**Tenbyte Live Streaming** is **Tenbyte's** end to end live broadcast infrastructure that gives developers and media teams full control over stream ingest, real-time transcoding, multi-rendition delivery, and playback.
+
+It replaces fragmented live video setups with a single, reliable pipeline built for low-latency broadcasting at any scale.
+
+## Where Live Streaming Fits
+See how different teams use Tenbyte Live Streaming in real projects.
+<Columns cols={3}>
+  <Card title="OTT" icon="tv-minimal-play">
+    Broadcast live channels to large audiences.
+  </Card>
+  <Card title="Ed Tech" icon="graduation-cap">
+    Run live classes and interactive sessions.
+  </Card>
+  <Card title="Content Business" icon="activity">
+    Monetize live events and control access.
+  </Card>
+  <Card title="E-commerce" icon="shopping-cart">
+    Host live shopping and product launches.
+  </Card>
+  <Card title="Tech/SaaS" icon="folder-code">
+    Embed live streams into software apps.
+  </Card>
+  <Card title="Marketing" icon="megaphone">
+    Engage viewers with live brand content.
+  </Card>
+</Columns>
+
+---
+
+## Live Streaming Offers
+
+### 1. Flexible Ingest
+Accept live feeds via **RTMP**, **SRT**, **RTSP**, or **UDP** — whether pushed from an encoder like OBS or pulled from an existing source URL.
+
+### 2. HLS & DASH Output
+Tenbyte packages your stream into adaptive **HLS** and **MPEG-DASH** formats, ready for playback on any device, browser, or player.
+
+### 3. Multi-Rendition Transcoding
+Every stream is transcoded into multiple quality rungs simultaneously. Viewers are automatically served the best rendition for their device and connection speed.
+
+### 4. Linear Live & Live Event Modes
+Run a **24/7 linear channel** for always-on broadcasting, or schedule a **Live Event** for one-time broadcasts — all from the same interface.
+
+### 5. Push & Pull 
+
+When creating a live stream, the first decision is how your video feed reaches Tenbyte. There are two ways: you push the feed out from your encoder, or Tenbyte pulls it from a source URL you already have.
+
+| | Push | Pull |
+|---|---|---|
+| **Who initiates** | Your encoder connects to Tenbyte | Tenbyte connects to your source |
+| **Protocols** | RTMP, SRT | SRT, RTSP, RTMP, UDP |
+| **Encoder required** | Yes — OBS, vMix, hardware encoder | No — any reachable stream URL |
+| **Stream key needed** | Yes — one per protocol | No — just a source URL |
+| **Best for** | Broadcasting from a local machine or studio | Re-streaming an existing feed, IP cameras, satellite links |
+| **Network control** | You control when the feed starts | Tenbyte starts pulling when the stream is activated |
+
+**Use Push** if you are broadcasting from OBS, vMix, or any hardware encoder sitting on your network. It is the most common setup and works out of the box with any standard broadcasting software.
+
+**Use Pull** if you already have a live stream running somewhere — for example an IP camera, a broadcast encoder publishing to a local RTSP server, or an upstream feed from another provider. Tenbyte will connect to it directly so you do not need to reconfigure your source.
+
+### 6. Custom Renditions Ladder
+Add custom rungs with full control over resolution, codec, bitrate, GOP, CRF, FPS, and audio settings to match your exact delivery requirements.
+
+### 7. Webhook Events
+Receive real-time POST notifications for every stream lifecycle event — signed with so you can verify authenticity and trigger downstream workflows automatically.
+
+### 8. CDN-Ready Origin URLs
+Every stream produces clean HLS/DASH origin URLs ready to be pointed at a CDN distribution for global, low-latency delivery to your viewers.
+
+### 9. Powerful API Control
+Create, update, start, and stop streams programmatically via the Tenbyte API — integrate live streaming directly into your platform without touching the dashboard.
+
+> Tenbyte Live Streaming gives you a **complete live broadcast pipeline** — from encoder to viewer — so you can focus on your content, not your infrastructure.

@@ -1,0 +1,48 @@
+---
+title: 'Output Protocols'
+icon: 'arrow-up-from-line'
+sidebarTitle: 'Output Protocols'
+---
+
+Output protocols define the delivery format Tenbyte uses to package and serve your live stream to viewers. You can enable one or both formats simultaneously to serve different players, devices, or CDNs at the same time.
+
+---
+
+## HLS
+
+**HTTP Live Streaming** is Apple's adaptive bitrate protocol. It segments your stream into small files delivered over standard HTTP and is supported natively in every major browser, mobile OS, and smart TV platform — including Safari, Chrome, Firefox, iOS, Android, and most smart TVs.
+
+HLS is the most universally compatible output format available. If you are not sure which to pick, enable HLS.
+
+**Playback URL format**
+```
+https://your-cdn.tenbyte.io/{stream_id}/master.m3u8
+```
+
+---
+
+## DASH
+
+**MPEG-DASH** (Dynamic Adaptive Streaming over HTTP) is an open-standard alternative to HLS. Like HLS, it delivers adaptive bitrate content over HTTP — but it is codec-agnostic and integrates more cleanly with DRM systems.
+
+DASH is recommended alongside HLS when you need broad coverage across non-Apple devices, or when your DRM setup requires it.
+
+**Playback URL format**
+```
+https://your-cdn.tenbyte.io/{stream_id}/manifest.mpd
+```
+
+---
+
+## HLS vs DASH at a Glance
+
+| | HLS | DASH |
+|---|---|---|
+| **Standard** | Apple | Open (MPEG) |
+| **Browser support** | Universal | Modern browsers |
+| **Native iOS / Safari** | ✅ Yes | ❌ No |
+| **DRM compatibility** | FairPlay, Widevine | Widevine, PlayReady |
+| **Codec flexibility** | Limited | Codec-agnostic |
+| **Best for** | Maximum device reach | DRM, non-Apple platforms |
+
+<Note>Enabling both HLS and DASH is the recommended setup for most production streams — it ensures full coverage across all devices and browsers without any additional cost.</Note>

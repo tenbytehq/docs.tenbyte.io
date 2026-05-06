@@ -1,0 +1,94 @@
+---
+title: 'Encoding & Renditions'
+icon: 'layers'
+sidebarTitle: 'Encoding & Renditions'
+---
+
+The **Renditions Ladder** defines the quality levels your stream is transcoded into. Every rung is encoded simultaneously in real time — viewers are automatically served the best rendition for their device and connection speed, switching seamlessly between them as conditions change.
+
+---
+
+## Rendition Templates
+
+Tenbyte provides three built-in templates as a starting point. Click **Template** in the Renditions Ladder section to apply one.
+
+<Frame caption="Rendition Templates">
+    <img src="/images/live-stream/renditions.png" alt="Rendition Templates" />
+</Frame>
+
+| Template | Rungs | Best for |
+|---|---|---|
+| **Balanced** | 3 rungs · default | Most live streams. Covers 1080p, 720p, and 480p with sensible bitrate targets. |
+| **Bandwidth** | 2 rungs · low-cost | Streams where delivery cost or bandwidth needs to be kept low. |
+| **Quality** | 3 rungs · premium | High-production broadcasts where maximum output quality is the priority. |
+
+The **Balanced** template is selected by default and is the right choice for most use cases.
+
+---
+
+## Default Balanced Renditions
+
+| # | Rendition | Codec | Height | Target / Max Bitrate | FPS |
+|--|---|---|---|---|---|
+| 1 | 1080p | H.264 / AAC | 1080p | 3,000 / 3,500 kbps | 30 |
+| 2 | 720p | H.264 / AAC | 720p | 1,500 / 2,000 kbps | 30 |
+| 3 | 480p | H.264 / AAC | 480p | 700 / 900 kbps | 30 |
+
+Click any row in the renditions table to expand and edit it.
+
+---
+
+## Adding a Custom Rung
+
+Click **+ Add Rung** to add a custom rendition on top of the template. Custom rungs are fully configurable.
+
+<Frame caption="Custom Rendition Rung">
+    <img src="/images/live-stream/custom-rung.png" alt="Custom Rendition Rung" />
+</Frame>
+
+### Video Settings
+
+| Field | Description |
+|---|---|
+| **Name** | A label for this rendition (e.g. `1080p High`). |
+| **Profile** | H.264 encoding profile — `Main` is recommended for most use cases. |
+| **Resolution** | Width × Height in pixels (e.g. `1280 × 720`). |
+| **Codec** | Video codec — currently `H.264`. |
+| **FPS** | Frames per second (e.g. `30`). |
+| **GOP** | Group of pictures size. Keyframe interval is calculated automatically from GOP ÷ FPS — for example GOP 60 at 30 FPS produces a keyframe every 2 seconds. |
+| **Target bitrate** | The target encoding bitrate in kbps. |
+| **Max bitrate** | The maximum allowed bitrate in kbps. |
+| **CRF** | Constant Rate Factor (0–51). Lower values produce higher quality at the cost of larger file size. |
+
+### Audio Settings
+
+| Field | Description |
+|---|---|
+| **Codec** | Audio codec — `AAC` is recommended for HLS and DASH. |
+| **Bitrate** | Audio bitrate in kbps (e.g. `128`). |
+| **Sample rate** | Audio sample rate in Hz (e.g. `48000`). |
+| **Channels** | `Stereo` by default. |
+
+---
+
+## Transmuxing
+
+If your source is already encoded at the right bitrate and resolution, you can use **Transmuxing** instead of full re-encoding. Transmuxing passes the video and audio through without re-encoding — it only repackages the stream into the chosen output format (HLS or DASH).
+
+This gives you the lowest latency and lowest CPU usage of any processing option.
+
+**Use transmuxing when:**
+- Your encoder is already producing the exact output quality you need.
+- You want to minimise processing latency.
+- You do not need multiple renditions — just a single passthrough quality level.
+
+---
+
+## GPU Transcoding
+
+For high-resolution or high-bitrate streams, enable **GPU Transcoding** to offload encoding from the CPU to a dedicated GPU. This significantly increases the number of concurrent streams that can be processed and reduces encoding latency.
+
+**Enable GPU Transcoding when:**
+- You are streaming at 1080p or above with high bitrate targets.
+- You are running many live channels simultaneously.
+- Encoding latency is a concern for your use case.

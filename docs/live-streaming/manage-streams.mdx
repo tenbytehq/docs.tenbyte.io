@@ -1,0 +1,86 @@
+---
+title: 'Manage Streams'
+icon: 'sliders-horizontal'
+sidebarTitle: 'Manage Streams'
+---
+
+This page covers how to view, monitor, and manage your live streams from the Tenbyte dashboard.
+
+---
+
+## Your Streams List
+
+Navigate to **Live Stream** from the left sidebar to see all your streams in one place.
+
+<Frame caption="Live Streams Dashboard">
+    <img src="/images/live-stream/list.png" alt="Live Streams Dashboard" />
+</Frame>
+
+Each stream shows the following at a glance:
+
+| Column | Description |
+|---|---|
+| **Name** | The label you gave the stream when creating it. |
+| **Type** | The stream type — `Linear` for 24/7 channels or `Live Event` for scheduled broadcasts. |
+| **Mode** | The output mode — `Video` or `Audio Only`. |
+| **Status** | The current state of the stream. |
+| **Date Created** | When the stream was created. |
+
+---
+
+## Stream Statuses
+
+| Status | What it means |
+|---|---|
+| **Idle** | The stream is created and ready, but no encoder is connected or pushing a feed yet. |
+| **Live** | The stream is active and broadcasting to viewers. |
+| **Stopping** | The stream is in the process of shutting down after the feed was disconnected. |
+
+---
+
+## Stream Actions
+
+Click the **three dots (⋮)** at the end of any stream row to open the actions menu.
+
+<Frame caption="Stream Actions Menu">
+    <img src="/images/live-stream/actions.png" alt="Stream Actions Menu" />
+</Frame>
+
+### Stream Detail
+Opens the stream's full detail page where you can view ingest credentials, renditions, output URLs, and live preview.
+
+### Stream Restart
+Restarts the stream worker. Use this if your stream is behaving unexpectedly — for example, if the encoder is connected but the stream is not coming through properly.
+
+### Stream Stop
+Stops the stream and disconnects any active encoder feed. The stream will return to **Idle** status after stopping.
+
+### Stream Delete
+Permanently deletes the stream and all its configuration. This action cannot be undone.
+
+<Warning>Deleting a stream removes its ingest credentials and output URLs permanently. Any encoder or player pointing to those endpoints will stop working immediately.</Warning>
+
+---
+
+## Stream Detail Page
+
+Click on any stream name, or select **Stream Detail** from the actions menu, to open its detail page.
+
+<Frame caption="Stream Detail Page">
+    <img src="/images/live-stream/details.png" alt="Stream Detail Page" />
+</Frame>
+
+The detail page is split into two panels:
+
+**Left panel**
+- **Preview player** — Shows a live preview of your stream. Displays "Ready to stream" when idle and updates automatically once a feed is received.
+- **Renditions** — Lists all active encode rungs with their real-time bitrate usage and peak values.
+
+**Right panel**
+- **Stream ID** — The unique identifier for this stream. Use this in API calls and CDN distribution setup.
+- **Type & Protocols** — Confirms the stream type and output delivery format (HLS / DASH).
+- **Ingest** — Shows the ingest mode (Push or Pull) along with the stream keys or source URL.
+- **Output Origin URLs** — The raw HLS or DASH origin endpoints for CDN distribution setup.
+- **Webhook** — Shows the configured webhook endpoint, or `Not configured` if none was set.
+
+<Warning>Output origin URLs are for CDN distribution setup only — never embed them directly in players. Always use a CDN delivery URL for viewer playback.</Warning>

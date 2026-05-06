@@ -1,0 +1,241 @@
+---
+title: 'Live Streaming Support FAQs'
+icon: 'message-circle-question-mark'
+sidebarTitle: 'FAQs'
+---
+
+Common questions about ingest protocols, stream setup, transcoding, recording, and delivery in Tenbyte Live Streaming.
+
+---
+
+## General
+
+## 1. What is the difference between Linear Live and Live Event?
+
+**Linear Live** runs continuously 24/7 — it stays active regardless of whether anyone is streaming to it. Use this for always-on channels, radio stations, or looping broadcast feeds.
+
+**Live Event** is designed for a single scheduled broadcast with a defined start and end. Use this for webinars, sports events, concerts, or any one-time stream.
+
+---
+
+## 2. What output formats does Tenbyte Live Streaming support?
+
+Tenbyte can deliver your live stream in **HLS**, **MPEG-DASH**, **RTMP**, and **HTTP-FLV** formats. You can enable more than one output at the same time to serve different players or CDNs simultaneously.
+
+---
+
+## 3. Can I stream audio only?
+
+Yes. When creating a stream, set **Output Mode** to **Audio Only**. Tenbyte will strip the video track and output audio alone — useful for podcast-style streams, radio broadcasts, or any scenario where video is not needed.
+
+---
+
+## 4. Can I push my stream to YouTube, Facebook, or a third-party CDN?
+
+Yes. Enable **RTMP** as an output protocol and enter the destination URL and stream key for the platform you want to push to (e.g. YouTube Live or Facebook Live). Tenbyte will re-stream the processed output to that endpoint.
+
+---
+
+## 5. How many renditions can I add to a stream?
+
+There is no fixed cap. The default template includes three rungs (1080p, 720p, 480p). You can add as many custom rungs as your plan allows by clicking **+ Add Rung** during stream creation or editing.
+
+---
+
+## 6. Can I edit a stream's settings after it is created?
+
+Yes. Open the stream from your Live Streams list and update the settings. Some changes — such as rendition configuration — may require the stream to be idle before they take effect.
+
+---
+
+## 7. What does the Idle status mean?
+
+**Idle** means the stream has been created and is ready to receive a feed, but no encoder is currently connected or pushing to it. The stream will activate automatically once your encoder starts sending video.
+
+---
+
+## 8. Can developers manage live streams via API?
+
+Yes. Tenbyte Live Streaming is fully API-driven. You can create, update, start, stop, and delete streams programmatically without touching the dashboard.
+
+---
+
+## Ingest Protocols
+
+## 9. What is RTMP and when should I use it?
+
+**RTMP** (Real-Time Messaging Protocol) is the most widely supported ingest protocol available. It is compatible with virtually every streaming encoder — including OBS, Wirecast, vMix, and hardware encoders from brands like Teradek and LiveU.
+
+**Use RTMP** as your default choice unless you have a specific reason to switch. If you are using OBS or any standard broadcasting software, RTMP will work out of the box.
+
+---
+
+## 10. What is SRT and when should I use it instead of RTMP?
+
+**SRT** (Secure Reliable Transport) is a modern protocol built for streaming over unpredictable or lossy networks like the public internet. It adds **encryption** and **automatic error recovery** on top of UDP, so it handles packet loss and reconnections far better than RTMP.
+
+**Use SRT** when your RTMP stream is dropping frames, stuttering, or disconnecting due to network instability — for example, when streaming from a remote location, a mobile connection, or over a long-distance link.
+
+---
+
+## 11. What is SRT Unicast?
+
+**SRT Unicast** is a point-to-point variant of SRT where the stream goes directly from one source to one fixed destination. It gives you all the reliability benefits of SRT but is used when you are connecting to a single specific endpoint rather than a general listener.
+
+**Use SRT Unicast** when your setup requires a dedicated, encrypted connection between your encoder and Tenbyte's ingest server.
+
+---
+
+## 12. What is MPEG-TS over UDP and when is it used?
+
+**MPEG-TS over UDP** sends your stream as an MPEG Transport Stream over the UDP protocol. It is common in professional broadcast environments, satellite links, and IPTV headend systems.
+
+Because there is no built-in error recovery, this works best on **reliable local or private networks** where packet loss is not a concern. Avoid it over the public internet.
+
+---
+
+## 13. What is MPEG-TS over RTP (multicast)?
+
+**MPEG-TS over RTP (multicast)** delivers your stream to a multicast group address over RTP. This means a single stream source can reach many receivers simultaneously without duplicating network traffic.
+
+**Use this** in large venue setups, enterprise networks, or any environment where multiple destinations on the same network need to receive the same stream at once.
+
+---
+
+## 14. What is MPEG-TS over UDP (multicast)?
+
+**MPEG-TS over UDP (multicast)** works the same way as MPEG-TS over RTP multicast but uses UDP as the transport instead of RTP. It reduces network load when multiple destinations on the same local network need to receive the same source stream simultaneously.
+
+---
+
+## 15. What are the MP3 over RTP and MP3 over RTMP options for?
+
+Both are **audio-only ingest protocols**:
+
+- **MP3 over RTP** — ingests an audio-only MP3 stream packaged inside RTP packets. Use this when your source sends RTP natively and you only need to stream audio.
+- **MP3 over RTMP** — an audio-only variant of RTMP that carries an MP3 stream without a video track. Use this when your encoder publishes audio-only content via RTMP.
+
+These are suited for radio-style broadcasts or any scenario where only audio needs to be delivered.
+
+---
+
+## Output Protocols
+
+## 16. What is HLS and why is it the recommended output?
+
+**HLS** (HTTP Live Streaming) is Apple's adaptive bitrate protocol. It segments your stream into small files delivered over standard HTTP, and it is supported natively in **every major browser, mobile OS, and smart TV platform**.
+
+HLS is the safest, most universally compatible choice for reaching the widest audience without requiring special players.
+
+---
+
+## 17. What is MPEG-DASH and how does it differ from HLS?
+
+**MPEG-DASH** is an open-standard alternative to HLS that also delivers adaptive bitrate content over HTTP. It is codec-agnostic and works well with DRM systems.
+
+Use MPEG-DASH when you need broad compatibility with **non-Apple devices** and modern browsers, or when your DRM setup requires it. In most cases, enabling both HLS and MPEG-DASH covers your entire audience.
+
+---
+
+## 18. What does "MPEG-DASH output in ascending order of bitrate" mean?
+
+By default, MPEG-DASH manifests list renditions from highest to lowest bitrate. Enabling this option **reverses the order** so the lowest bitrate appears first in the manifest.
+
+Some players and CDNs prefer this ordering when selecting an initial rendition on slow connections — it helps them start playback faster rather than attempting a high-bitrate rendition first.
+
+---
+
+## 19. What is HTTP-FLV output?
+
+**HTTP-FLV** delivers your stream as Flash Video over standard HTTP connections. It offers **very low latency** and is widely used in Asian streaming platforms and CDNs. It requires a compatible player on the viewer side but avoids the chunking overhead of HLS.
+
+Use this if your platform or CDN specifically requires HTTP-FLV delivery.
+
+---
+
+## Advanced Features
+
+## 20. What is High Availability (HA) mode?
+
+**HA mode** keeps your channel live even if one ingest point fails. When enabled, Tenbyte accepts a **backup stream** alongside your primary feed and automatically switches to the backup if the primary drops — with no manual intervention required.
+
+Enable HA for any production broadcast where downtime is not acceptable.
+
+---
+
+## 21. What is Dynamic Ad Insertion (DAI)?
+
+**DAI** parses **SCTE-35 cue messages** embedded in MPEG-TS over UDP streams and uses them to trigger ad break insertion at the correct points in the live stream.
+
+Enable DAI if your encoder or upstream signal includes SCTE-35 markers and you want Tenbyte to honor them for ad replacement.
+
+---
+
+## 22. What is GPU Transcoding?
+
+**GPU Transcoding** offloads the video encoding workload from the CPU to a dedicated GPU. This significantly increases the number of concurrent streams the server can handle and reduces encoding latency.
+
+Enable GPU Transcoding for **high-resolution or high-bitrate streams**, or when you are running many channels at the same time.
+
+---
+
+## 23. What is Transmuxing and when should I use it?
+
+**Transmuxing** passes the video and audio through without re-encoding. The stream is repackaged into the chosen output format (e.g. HLS or MPEG-DASH) using exactly the codec settings from your encoder.
+
+Use transmuxing when your source is **already encoded at the right bitrate and resolution** — it gives you the lowest latency and lowest CPU usage of any processing option.
+
+---
+
+## Recording
+
+## 24. Can I record my live stream?
+
+Yes. Tenbyte supports live recording in two formats:
+
+- **HLS** — saves the stream as a set of segmented `.ts` files and a playlist. The recording is immediately ready to serve as on-demand HLS content after the broadcast ends with no additional conversion needed.
+- **MP4** — saves the stream as a single MP4 file. The file is finalized and available once the stream ends, and is compatible with any video player, editor, or platform.
+
+---
+
+## 25. When does recording start and stop?
+
+Recording starts automatically when your stream begins and stops when it ends. No manual action is required.
+
+---
+
+## Other Features
+
+## 26. Can I add a logo or watermark to my stream?
+
+Yes. Tenbyte supports **logo and watermark insertion**. You can upload an image, set its position on screen, and adjust its opacity. The watermark is burned into the transcoded output and will appear on all recordings and live deliveries from that channel.
+
+---
+
+## 27. Can I capture screenshots or thumbnails from a live stream?
+
+Yes. The **Snapshot as JPG** feature periodically captures a still frame from the live stream and saves it as a JPEG image. This is useful for generating thumbnail previews, monitoring stream health at a glance, or displaying a current-frame image on your website without embedding the full player.
+
+---
+
+## 28. What is the Time Shifting / Rewind feature?
+
+**Time Shifting** (also called DVR or catch-up) allows viewers to rewind and watch earlier parts of a live stream without leaving the live player. Tenbyte stores a rolling window of the broadcast, and viewers can scrub back within that window while others continue watching live.
+
+<Note>The maximum rewind window duration is configured at the server level. Contact the Tenbyte team if you need to adjust the default window length.</Note>
+
+---
+
+## 29. What is a Webhook and how do I use it?
+
+A **Webhook** sends a POST request to your endpoint whenever a stream lifecycle event occurs — for example, when a stream starts, stops, or encounters an error. All requests are signed with **HMAC-SHA256** so you can verify they came from Tenbyte.
+
+To set one up, enter your endpoint URL in the **Webhook** section during stream creation. You can use webhooks to trigger downstream actions like sending notifications, updating a database, or starting a recording workflow.
+
+---
+
+## 30. What are Output Origin URLs and can I share them with viewers?
+
+Output Origin URLs are the raw HLS or DASH playback endpoints generated by Tenbyte's ingest servers. They are intended **for CDN distribution setup only** — not for direct viewer playback.
+
+Always point a CDN distribution at your stream and share the CDN's delivery URL with your viewers instead. Embedding origin URLs directly in players can cause reliability and performance issues.

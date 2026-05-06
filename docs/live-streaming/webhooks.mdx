@@ -1,0 +1,61 @@
+---
+title: 'Webhooks'
+icon: 'webhook'
+sidebarTitle: 'Webhooks'
+---
+
+Tenbyte Live Streaming can send real-time POST notifications to your server whenever a stream lifecycle event occurs. This lets you trigger downstream actions — like sending alerts, updating a database, or starting a recording workflow — automatically.
+
+---
+
+## Setting Up a Webhook
+
+You can add a webhook endpoint when creating a stream or by editing an existing one.
+
+- In the **Webhook** section at the bottom of the stream creation form, enter your **Endpoint URL**.
+
+    <Frame caption="Webhook Endpoint Setup">
+        <img src="/images/live-stream/webhook.png" alt="Webhook Endpoint Setup" />
+    </Frame>
+
+- A signing secret is generated automatically after the stream is created. Use this secret to verify that incoming requests came from Tenbyte.
+
+<Note>The webhook endpoint URL is optional. You can leave it blank and add or update it later from the stream detail page.</Note>
+
+---
+
+## Webhook Events
+
+Tenbyte sends a POST request to your endpoint for each of the following stream lifecycle events:
+
+| Event | When it fires |
+|---|---|
+| `stream.started` | The stream feed is received and the broadcast begins. |
+| `stream.stopped` | The stream feed is disconnected and the broadcast ends. |
+| `stream.error` | An error occurred during ingest or processing. |
+| `stream.idle` | The stream has returned to idle after stopping. |
+
+---
+
+## Example Payload
+
+Each webhook request is sent as JSON with `Content-Type: application/json`.
+
+```json
+{
+  "event": "stream.started",
+  "stream_id": "e17be730-44b9-4ca6-af35-b17fb84958d6",
+  "stream_name": "Main Live Channel",
+  "timestamp": "2026-05-06T10:32:00Z"
+}
+```
+
+---
+
+## Viewing Webhook Status
+
+From the stream detail page, the **Webhook** panel shows the configured endpoint URL. If no webhook has been set up, it displays `Not configured`.
+
+<Frame caption="Webhook Status on Stream Detail">
+    <img src="/images/live-stream/webhook2.png" alt="Webhook Status on Stream Detail" />
+</Frame>

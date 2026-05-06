@@ -1,0 +1,136 @@
+---
+title: 'Quick Start Guide'
+icon: 'zap'
+sidebarTitle: 'Quick Start Guide'
+---
+
+This guide walks you through creating your first live stream on Tenbyte and going live using OBS or any compatible encoder.
+
+In just a few steps, you'll have a fully configured stream delivering to viewers in real time.
+
+## Prerequisites
+
+Before starting, make sure you have:
+
+- A **Tenbyte account** — [Sign up](https://console.tenbyte.io/sign-up)
+- **OBS Studio** (or any RTMP / SRT compatible encoder) installed on your machine
+- An **API key** if you plan to manage streams programmatically
+
+---
+
+## Open Live Streaming
+
+- After signing in, go to **Live Stream** from the left sidebar. You will see a table where your streams will be listed.
+
+    <Frame caption="Live Streams Dashboard">
+        <img src="/images/live-stream/list.png" alt="Live Streams Dashboard" />
+    </Frame>
+
+- Click **+ Create Live Stream** in the top right corner to open the stream creation form.
+
+---
+
+## Choose Your Ingest Method
+
+The **Ingest** section defines how your video feed reaches Tenbyte.
+
+- Select **Push from your encoder** if you are using OBS, vMix, or a hardware encoder. You will get a **Server URL** and **Stream Key** to paste into your encoder.
+- Select **Pull from a source** if you already have a live stream URL. Tenbyte will connect to it and pull the feed automatically.
+
+    <Frame caption="Ingest Method Selection">
+        <img src="/images/live-stream/create.png" alt="Ingest Method Selection" />
+    </Frame>
+
+- Under **Push protocols**, enable **RTMP**, **SRT**, or both — you get a separate stream key for each.
+
+<Note>Not sure which protocol to pick? See the [FAQs](/docs/live-stream/faqs) for a plain-English comparison of RTMP vs SRT.</Note>
+
+---
+
+## Configure Your Stream
+
+Fill in the **Stream** section:
+
+- **Stream Name** — A label to identify your stream in the dashboard (e.g. `Main Live Channel`).
+- **Stream Type** — Choose **Linear Live** for a 24/7 continuous channel, or **Live Event** for a one-time scheduled broadcast.
+- **Output Mode** — Choose **Video** for standard delivery, or **Audio Only** for radio-style streams.
+- **Output Protocols** — Pick at least one: **HLS**, **DASH**, or both.
+
+    <Frame caption="Stream Settings">
+        <img src="/images/live-stream/stream-config.png" alt="Stream Settings" />
+    </Frame>
+
+---
+
+## Set Up Renditions
+
+The **Renditions Ladder** defines the quality levels your stream is transcoded into. Click **Template** to pick a starting point:
+
+- **Balanced** — 3 rungs (1080p, 720p, 480p) · default. Works well for most streams.
+- **Bandwidth** — 2 rungs · low-cost. Good for keeping delivery costs down.
+- **Quality** — 3 rungs · premium. Higher bitrate targets for maximum output quality.
+
+You can click any row to customize more.
+
+    <Frame caption="Renditions Ladder">
+        <img src="/images/live-stream/renditions.png" alt="Renditions Ladder" />
+    </Frame>
+
+- To add a custom quality profile on top of the template, click **+ Add Rung** and fill in the resolution, bitrate, and audio settings.
+
+    <Frame caption="Custom Rendition Rung">
+        <img src="/images/live-stream/custom-rung.png" alt="Custom Rendition Rung" />
+    </Frame>
+
+- Optionally, enter a **Webhook URL** to receive notifications for stream events like start, stop, or error.
+
+Once ready, click **Create Live Stream**.
+
+---
+
+## Connect OBS and Go Live
+
+After the stream is created, its status of it in the stream list will show as **Idle**. Connect your encoder to start broadcasting.
+
+- Open your stream from the stream list (you can click the three dots beside the name to click on "Stream detail" or simply click on the row of that stream) and copy the **Server URL** and **Stream Key** from the **Ingest** section.
+
+    <Frame caption="Stream Ingest Credentials">
+        <img src="/images/live-stream/detail.png" alt="Stream Ingest Credentials" />
+    </Frame>
+
+- Open **OBS Studio** and go to **Settings → Stream**.
+- Set **Service** to `Custom`.
+- Paste the **Server URL** and **Stream Key** into their respective fields.
+- Click **OK**, then hit **Start Streaming** in OBS.
+
+The stream preview on your dashboard will update automatically once OBS begins pushing the feed.
+
+<Note>If you selected **Pull** as your ingest method, no encoder setup is needed — Tenbyte connects to your source URL automatically.</Note>
+
+---
+
+## Stop Your Stream
+
+When you are done broadcasting or you want to stop encoding of a stream, stop the stream from the dashboard.
+
+- Go to the **Live Stream** list and click the **three dots (⋮)** next to your stream.
+- Select **Stream Stop** from the actions menu.
+
+The stream will disconnect the encoder feed and return to **Idle** status.
+
+<Note>You can also use **Stream Restart** from the same menu if your stream is behaving unexpectedly — for example, if the encoder is connected but the feed is not coming through.</Note>
+
+---
+
+## Copy Your Stream ID
+
+- Open your stream from the **Live Stream** list.
+- In the **Stream** panel on the right, locate the **ID** field and click **Copy**.
+
+    <Frame caption="Copy Stream ID">
+        <img src="/images/live-stream/stream-id.png" alt="Copy Stream ID" />
+    </Frame>
+
+- Use this ID in API calls, player configurations, or CDN distribution setup.
+
+<Warning>The **Output Origin URLs** shown on the stream detail page are for CDN distribution setup only — never paste them directly into a player. Always point a CDN distribution at your stream and use its delivery URL for viewer playback.</Warning>
