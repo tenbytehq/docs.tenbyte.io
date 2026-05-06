@@ -161,6 +161,53 @@
             ]
           },
           {
+            "group": "Live Streaming",
+            "icon": "radio",
+            "expanded": false,
+            "pages": [
+              {
+                "group": "Getting Started",
+                "expanded": false,
+                "icon": "rocket",
+                "pages": [
+                  "docs/live-streaming/index",
+                  "docs/live-streaming/quickstart",
+                  "docs/live-streaming/live-work",
+                  "docs/live-streaming/live-faqs"
+                ]
+              },
+              {
+                "group": "Manage Live Streams",
+                "expanded": false,
+                "icon": "video",
+                "pages": [
+                  "docs/live-streaming/manage-streams"
+                ]
+              },
+              {
+                "group": "Ingest & Encoding",
+                "expanded": false,
+                "icon": "palette",
+                "pages": [
+                  "docs/live-streaming/ingest-and-encoding/configuration",
+                  "docs/live-streaming/ingest-and-encoding/ingest-protocols",
+                  "docs/live-streaming/ingest-and-encoding/output-protocols",
+                  "docs/live-streaming/ingest-and-encoding/encoding-templates"
+                  ]
+              },
+              
+              {
+                "group": "Webhooks",
+                "expanded": false,
+                "icon": "webhook",
+                "pages": [
+                  "docs/live-streaming/webhooks"
+                ]
+              }
+              
+            ]
+          },
+          {
             "group": "CDN",
             "expanded": false,
             "icon": "globe",
@@ -334,6 +381,7 @@
               }
             ]
           }
+          
         ]
       },
       {

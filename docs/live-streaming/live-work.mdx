@@ -1,0 +1,32 @@
+---
+title: 'How Live Streaming Works'
+icon: 'cpu'
+sidebarTitle: 'How Live Streaming Works'
+---
+
+
+Tenbyte Live Streaming structures every broadcast around three stages: **ingest, encoding, and output**. Each stage has a specific role, and together they form a single continuous pipeline from your encoder to your viewers.
+
+### 1. Ingest — Getting the Feed In
+
+The pipeline begins with ingest. This is where your video feed enters Tenbyte, either pushed from your encoder or pulled from a source URL. The ingest stage accepts a wide range of transport protocols — RTMP, SRT, RTSP, and UDP — and is compatible with all standard broadcasting software and hardware encoders.
+
+Your source can be anything from a laptop running OBS to a professional hardware encoder or an IP camera on a local network. As long as the feed arrives over a supported protocol, Tenbyte takes it from there.
+
+### 2. Encoding — Processing the Stream
+
+Once the feed is received, Tenbyte encodes it in real time. The incoming video is decoded, processed, and re-encoded into multiple quality levels simultaneously using the renditions ladder you configured. Each rung produces an independent output at its defined resolution, bitrate, and frame rate.
+
+This multi-rendition output is what enables adaptive bitrate playback — viewers are automatically served the highest quality their device and connection can handle, switching between renditions seamlessly without interruption.
+
+The encoding stage also handles packaging. The encoded video is segmented and wrapped into the delivery formats you selected — HLS, DASH, or both — ready to be picked up by the output stage the moment each segment is complete.
+
+### 3. Output — Delivering to Viewers
+
+The final stage is output. Tenbyte writes the packaged stream segments to storage and makes them available for delivery.
+
+**Storage** — Tenbyte is fully **S3-compatible**, meaning you can point the output at any S3-compatible object storage bucket. Segments and manifests are written continuously as the stream runs.
+
+**Delivery** — For viewer-facing playback, connect a **Tenbyte CDN** distribution to your stream's origin URLs. The CDN caches and distributes segments globally, reducing latency and offloading origin traffic so the stream performs reliably regardless of audience size.
+
+<Note>Output origin URLs are for CDN and storage configuration only. Always use a CDN delivery URL when embedding the stream in a player.</Note>

@@ -1,0 +1,65 @@
+---
+title: 'Ingest Protocols'
+icon: 'arrow-down-to-line'
+sidebarTitle: 'Ingest Protocols'
+---
+
+The ingest protocol defines how your video feed reaches Tenbyte. There are two ingest methods — **Push** and **Pull** — each supporting a different set of protocols depending on your setup.
+
+<Frame caption="Ingest Method Selection">
+    <img src="/images/live-stream/create.png" alt="Ingest Method Selection" />
+</Frame>
+
+---
+
+## Push
+
+With Push, your encoder initiates the connection and sends the feed directly to Tenbyte. You get a **Server URL** and **Stream Key** for each enabled protocol, which you paste into your encoder.
+
+Compatible with OBS, vMix, Wirecast, and any hardware encoder.
+
+You can enable one or both push protocols — each gets its own stream key.
+
+### RTMP
+
+Real-Time Messaging Protocol. The most widely supported ingest protocol available, compatible with virtually every streaming encoder on the market — including OBS, Wirecast, vMix, and hardware encoders from brands like Teradek and LiveU.
+
+**Use RTMP** as your default choice. If you are using OBS or any standard broadcasting software and your network connection is stable, RTMP will work out of the box.
+
+### SRT
+
+Secure Reliable Transport. A modern protocol built for streaming over unpredictable or lossy networks. SRT adds encryption and automatic error recovery on top of UDP, handling packet loss and reconnections far better than RTMP.
+
+**Use SRT** when your RTMP stream is dropping frames, stuttering, or disconnecting — for example when broadcasting from a remote location, a mobile connection, or over a long-distance link.
+
+<Note>Both RTMP and SRT can be enabled simultaneously. Each gets its own stream key so you can switch between them without reconfiguring your stream.</Note>
+
+---
+
+## Pull
+
+With Pull, Tenbyte initiates the connection — it reaches out to your source URL and pulls the feed automatically. No encoder configuration is needed on your end. Just make sure the source URL is publicly reachable before activating the stream.
+
+**Use Pull** when you already have a live stream running somewhere — for example an IP camera, a broadcast encoder publishing to a local server, or an upstream feed from another provider.
+
+### RTMP
+
+Tenbyte connects to an existing RTMP source URL and pulls the feed. Use this when your source is already publishing an RTMP stream to a reachable endpoint.
+
+### SRT
+
+Tenbyte connects to an SRT listener and pulls the feed. Use this when your source supports SRT and you want the reliability benefits of SRT without configuring a push from your end.
+
+### RTSP
+
+Real Time Streaming Protocol. Commonly used by IP cameras, NVRs, and professional broadcast equipment. If your camera or device exposes an RTSP stream URL (e.g. `rtsp://192.168.1.10:554/stream`), Tenbyte can pull directly from it.
+
+**Use RTSP** for IP cameras, security cameras, or any hardware device that publishes an RTSP feed.
+
+### UDP
+
+Sends the stream as an MPEG Transport Stream over UDP. Common in professional broadcast environments, satellite links, and IPTV headend systems. There is no built-in error recovery so this works best on reliable local or private networks.
+
+**Use UDP** in controlled broadcast environments where packet loss is not a concern. Avoid it over the public internet.
+
+<Note>For a full plain-English comparison of Push vs Pull, see the [What is Live Streaming?](/docs/live-stream) page.</Note>

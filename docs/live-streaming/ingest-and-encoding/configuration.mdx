@@ -1,0 +1,102 @@
+---
+title: 'Configuration'
+icon: 'clapperboard'
+sidebarTitle: 'Configuration'
+---
+
+This page explains how to configure ingest and encoding when creating or editing a live stream.
+
+---
+## Ingest Method
+
+The **Ingest** section defines how your video feed reaches Tenbyte. Choose one of two methods:
+
+<Frame caption="Ingest Method Selection">
+    <img src="/images/live-stream/create.png" alt="Ingest Method Selection" />
+</Frame>
+
+### Push from Your Encoder
+Your encoder sends the feed directly to Tenbyte. Compatible with OBS, vMix, Wirecast, and any hardware encoder. You get a unique **Server URL** and **Stream Key** for each enabled protocol.
+
+- Enable **RTMP**, **SRT**, or both under **Push protocols** — you get a separate stream key for each.
+
+### Pull from a Source
+Tenbyte connects to your stream URL and pulls the feed automatically. No encoder configuration needed on your end — just make sure the source URL is publicly reachable.
+
+- Supported pull protocols: **SRT**, **RTSP**, **RTMP**, and **UDP**.
+
+<Note>For a plain-English comparison of all protocols, see the [FAQs](/docs/live-stream/faqs).</Note>
+
+---
+
+## Stream Settings
+
+<Frame caption="Stream Settings">
+    <img src="/images/live-stream/stream-config.png" alt="Stream Settings" />
+</Frame>
+
+| Field | Options | Description |
+|---|---|---|
+| **Stream Name** | Free text | A label to identify your stream in the dashboard. |
+| **Stream Type** | Linear Live / Live Event | Linear runs 24/7 nonstop. Live Event is a one-time scheduled broadcast. |
+| **Output Mode** | Video / Audio Only | Choose full video delivery or audio-only for radio-style streams. |
+| **Output Protocols** | HLS / DASH | Pick at least one delivery format. Both can be enabled simultaneously. |
+
+---
+
+## Renditions Ladder
+
+The **Renditions Ladder** defines the quality levels your stream is transcoded into. All rungs are encoded and delivered simultaneously — viewers are automatically served the best one for their device and connection speed.
+
+<Frame caption="Renditions Ladder">
+    <img src="/images/live-stream/renditions.png" alt="Renditions Ladder" />
+</Frame>
+
+### Templates
+
+Click **Template** to apply a preset rendition set as a starting point:
+
+| Template | Rungs | Description |
+|---|---|---|
+| **Balanced** | 3 rungs · default | 1080p, 720p, and 480p. A good all-round starting point for most streams. |
+| **Bandwidth** | 2 rungs · low-cost | A leaner set optimised for lower bandwidth usage and cost. |
+| **Quality** | 3 rungs · premium | Higher bitrate targets across all rungs for maximum quality output. |
+
+You can then click any row to customize however you want.
+
+### Adding a Custom Rung
+
+Click **+ Add Rung** to add a custom rendition alongside the template rungs.
+
+<Frame caption="Custom Rendition Rung">
+    <img src="/images/live-stream/custom-rung.png" alt="Custom Rendition Rung" />
+</Frame>
+
+Each custom rung exposes the following settings:
+
+**Video**
+
+| Field | Description |
+|---|---|
+| **Name** | A label for this rendition (e.g. `1080p High`). |
+| **Profile** | H.264 encoding profile — `Main` is recommended for most use cases. |
+| **Resolution** | Width × Height in pixels (e.g. `1280 × 720`). |
+| **Codec** | Video codec — currently `H.264`. |
+| **FPS** | Frames per second (e.g. `30`). |
+| **GOP** | Group of pictures size. Keyframe interval is calculated automatically from GOP ÷ FPS. |
+| **Target bitrate** | The target encoding bitrate in kbps. |
+| **Max bitrate** | The maximum allowed bitrate in kbps. |
+| **CRF** | Constant Rate Factor (0–51). Lower values = higher quality. |
+
+**Audio**
+
+| Field | Description |
+|---|---|
+| **Codec** | Audio codec — `AAC` recommended. |
+| **Bitrate** | Audio bitrate in kbps (e.g. `128`). |
+| **Sample rate** | Audio sample rate in Hz (e.g. `48000`). |
+| **Channels** | `Stereo` by default. |
+
+Click a rung row to expand and edit it, or click **Delete** to remove it.
+
+<Note>Click a row in the renditions table to edit an existing rung at any time.</Note>
