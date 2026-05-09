@@ -1,55 +1,91 @@
 ---
 title: 'Distribution Overview'
 sidebarTitle: 'Distribution Overview'
+description: 'Inspect distribution status, hostname, configuration, and lifecycle metadata from the console or API.'
 icon: 'info'
 ---
 
-This section allows you to view essential information about your Tenbyte CDN distribution. 
+The **Overview** tab is your at-a-glance status for a single distribution: hostname, current state, when it was created, and basic config you can edit in place.
 
-Here you can monitor the status, domain, and configuration of your CDN distribution. 
+## Open the distribution
 
-## Manage your Distribution 
-- To **manage your distribution**, click the **Action** button next to your specific CDN distribution and select **Manage** from the dropdown menu.
+From the CDN workspace, click **Action → Manage** on the row for your distribution.
 
-    <Frame caption="Manage your Distribution">
-        <img src="/images/cdn/13.png" alt="Manage your Distribution" />
-    </Frame>
+<Frame caption="Manage your Distribution">
+    <img src="/images/cdn/13.png" alt="Manage your Distribution" />
+</Frame>
 
-- A dashboard for your created CDN distribution will appear, allowing you to manage and configure various settings for your distribution.
+The detail dashboard opens. Pick **Overview** in the left sidebar.
 
-    <Frame caption="CDN Distribution Dashboard">
-        <img src="/images/cdn/14.png" alt="CDN Distribution Dashboard" />
-    </Frame>
+<Frame caption="CDN Distribution Dashboard">
+    <img src="/images/cdn/14.png" alt="CDN Distribution Dashboard" />
+</Frame>
 
-- Select **Overview** from the left sidebar, then fill in the required fields such as the Distribution Name and Description to complete the configuration of your CDN distribution.
+## Distribution details
 
---- 
+<Frame caption="CDN Distribution Details">
+    <img src="/images/cdn/16.png" alt="CDN Distribution Details" />
+</Frame>
 
-## Distribution Details
-This section provides basic information about your CDN distribution.
+| Field | What it means |
+|-------|---------------|
+| **Domain** | The CDN hostname (system-generated or your custom one). Click **Copy Domain** to copy. |
+| **Status** | Lifecycle state — see the table below. |
+| **Created On** | Distribution creation timestamp. |
+| **Last Modified** | Timestamp of the most recent config change (cache rules, headers, origin, etc.). |
 
-    <Frame caption="CDN Distribution Details">
-        <img src="/images/cdn/16.png" alt="CDN Distribution Details" />
-    </Frame>
+### Status values
 
-- **Domain**: The Domain field displays the unique domain name assigned to your CDN distribution.
-
-<Tip>
-    You can click Copy Domain to easily copy the domain name to your clipboard.
-</Tip>
-
-- **Status**: The Status shows the current state of the distribution. It can show various statuses such as **`Provisioning`**  or **`Deployed`**.
-- **Created On**: This section shows the date and time when the distribution was created.
-- **Last Modified**: The Last Modified field shows when the distribution's settings were last updated.
-
---- 
+| Status | Meaning | Action |
+|--------|---------|--------|
+| `Provisioning` | Edge config is rolling out. | Wait — usually under a minute. Don't switch DNS yet. |
+| `Deployed` | Active everywhere. | Safe to send traffic. |
+| `Updating` | A config change is propagating. | Existing traffic is unaffected. |
+| `Disabled` | Distribution is paused. | The hostname returns `503` until re-enabled. |
 
 ## Configuration
-Here, you can modify the basic configuration of your distribution, including the domain name and other settings as needed for your specific use case.
 
-    <Frame caption="CDN Distribution Configuration">
-        <img src="/images/cdn/17.png" alt="CDN Distribution Configuration" />
-    </Frame>
+<Frame caption="CDN Distribution Configuration">
+    <img src="/images/cdn/17.png" alt="CDN Distribution Configuration" />
+</Frame>
 
-    - **Distribution Name**: You can assign a name to your CDN distribution for easier identification.
-    - **Description**: Optionally, you can provide a brief description to describe the distribution, helping you identify it in the future.
+| Field | Notes |
+|-------|-------|
+| **Distribution Name** | Internal label. Changing this does not affect the public hostname. |
+| **Description** | Free-text. Use it for owner / team / runbook links. |
+
+## Inspect via API
+
+```bash
+curl -sS "https://api.tenbyte.io/cdn/distributions/$DISTRIBUTION_ID" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN" | jq '{name, domain, status, last_modified}'
+```
+
+Expected:
+
+```json
+{
+  "name": "prod-web",
+  "domain": "your-distribution.tenbytecdn.com",
+  "status": "Deployed",
+  "last_modified": "2026-05-09T10:42:11Z"
+}
+```
+
+Wire this into a healthcheck so deploys block on `Deployed`.
+
+## Quick health checks
+
+```bash
+# 1. Edge reachable?
+curl -sSI "https://$CDN_HOST/" | head -1
+
+# 2. TLS valid?
+openssl s_client -connect "$CDN_HOST:443" -servername "$CDN_HOST" </dev/null \
+  2>/dev/null | openssl x509 -noout -subject -dates
+
+# 3. HTTP/2 / HTTP/3 negotiated?
+curl -sS --http2 -o /dev/null -w '%{http_version}\n' "https://$CDN_HOST/"
+```
+
+See [SSL](/docs/cdn/distributions/ssl) and [Headers](/docs/cdn/distributions/headers) for tuning.

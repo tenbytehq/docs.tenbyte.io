@@ -1,47 +1,118 @@
 ---
-title: 'Tenbyte CDN Support FAQs'
-icon: 'message-circle-question-mark'
+title: 'Tenbyte CDN FAQs'
+icon: 'circle-help'
 sidebarTitle: 'FAQs'
+description: 'Operational, developer, and billing questions about Tenbyte CDN.'
 ---
 
-Here you'll find answers to the most common questions about using Tenbyte CDN for content delivery, performance optimization, security, and billing.
+Quick answers grouped by topic. For deeper guidance, follow the linked pages or the [API reference](/api-reference/cdn).
 
-## 1. What is Tenbyte CDN?
+## General
 
-Tenbyte CDN is a high-performance network that accelerates content delivery by serving data from the nearest edge server to users, ensuring fast load times and reliable performance.
+### What is Tenbyte CDN?
 
---- 
+A global content delivery network with anycast routing, edge caching, image optimization, signed URLs, and a REST API. Edge nodes serve cached responses close to the user; origin only sees cache misses.
 
-## 2. How does Tenbyte CDN improve my website’s performance?
+### How does it speed up my site?
 
-The Tenbyte CDN saves content from various edge locations, letting the user access content at a faster speed and making it more user-friendly.
+Three levers: shorter network distance (edge PoP near user), cached responses (no origin round-trip on hits), and HTTP/2 + HTTP/3 multiplexing.
 
---- 
+### What protocols are supported?
 
-## 3. What are the benefits of Tenbyte CDN’s edge servers?
+HTTP/1.1, HTTP/2, and HTTP/3 (QUIC) on the client side. Origin pulls support HTTP/1.1 and HTTP/2.
 
-Tenbyte’s edge servers reduce latency by serving content closer to users, ensuring faster loading speeds and smoother performance across regions.
+## Caching
 
---- 
+### What is the default cache TTL?
 
-## 4. How does Tenbyte CDN handle high traffic?
+The edge respects your origin's `Cache-Control: max-age` and `Expires` headers. To override, configure a [cache rule](/docs/cdn/distributions/cache-rules).
 
-Tenbyte CDN can effortlessly handle traffic spikes. It offers performance scalability that guarantees high-speed and availability. That’s true even when demand gets heavy. 
+### Why do I keep seeing `x-cache: MISS`?
 
---- 
+Common causes:
 
-## 5. Is my content secure with Tenbyte CDN?
+- Origin sends `Cache-Control: no-store`, `private`, or `max-age=0`.
+- Each request has a unique query string and cache-key includes the query.
+- Different `Vary` headers fragment the cache.
+- Object exceeds the max cacheable size.
 
-Tenbyte CDN does include enterprise security features like **SSL, DDoS protection** and a **WAF**, which protect your content from any kind of cyber threat.
+Inspect the response with `curl -I` and check the cache rule for the path.
 
---- 
+### How do I bust the cache after a deploy?
 
-## 6. How is Tenbyte CDN billed?
+Use [Purge by Pattern](/docs/cdn/purge/purge-by-pattern) for a path or wildcard, or [Purge All](/docs/cdn/purge/purge-all). Both are available via the API:
 
-Tenbyte CDN offers a pay-as-you-go pricing structure based on the actual usage with no hidden fees. 
+```bash
+curl -X POST "https://api.tenbyte.io/cdn/distributions/$DISTRIBUTION_ID/purge" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"paths": ["/static/*"]}'
+```
 
---- 
+## Security
 
-## 7. What kind of support does Tenbyte CDN offer?
+### Is my content secure?
 
-Tenbyte offers 24/7 technical support through multiple channels, ensuring you receive prompt assistance whenever you need it.
+TLS 1.2/1.3, optional WAF, [token-authenticated signed URLs](/docs/cdn/distributions/access-rules/token-authentication), and IP / referrer / country rules. DDoS mitigation runs at the edge.
+
+### How do I protect a private path?
+
+Layer it: token authentication for time-limited URLs, plus referrer or IP rules so a leaked URL still can't be replayed from arbitrary networks. See [Access rules](/docs/cdn/distributions/access-rules/overview).
+
+### Where do I rotate the signing secret?
+
+Per access rule, in the console. Walk through the [rotation runbook](/docs/cdn/distributions/access-rules/token-authentication#rotating-the-secret) before swapping in production.
+
+## Operations
+
+### How do I monitor traffic?
+
+[Analytics](/docs/cdn/analytics/overview) — bandwidth, request count, cache-hit ratio, and response-class breakdown. Pull the same metrics from the API for your dashboards.
+
+### Can I run multi-region or multi-CDN?
+
+Yes. Tenbyte CDN routes to the healthiest edge automatically. For multi-CDN setups, point one CNAME per provider and use a steering DNS (Route 53, NS1) for failover.
+
+### What happens during a regional outage?
+
+Traffic shifts to the next-best PoP via anycast and health checks. Origin is only contacted on cache miss, so cached content keeps serving.
+
+## API and automation
+
+### Where is the API reference?
+
+[CDN API reference](/api-reference/cdn). The OpenAPI spec is published at `https://raw.githubusercontent.com/vidinfra/open-api-docs/refs/heads/main/cdn-openapi.json`.
+
+### How do I authenticate API calls?
+
+Bearer token in the `Authorization` header. Generate one in **Organization → API Keys**:
+
+```bash
+curl -H "Authorization: Bearer $TENBYTE_API_TOKEN" https://api.tenbyte.io/cdn/distributions
+```
+
+### Are there rate limits?
+
+Yes. Standard accounts get a generous per-minute quota that's enough for normal automation. Bulk imports or large purge fan-outs should batch and back off on `429`.
+
+### Are webhooks supported?
+
+Yes — for purge completion, certificate events, and traffic alerts. Configure in the distribution settings.
+
+## Billing
+
+### How is Tenbyte CDN billed?
+
+Pay-as-you-go on bandwidth and requests. No minimums, no long-term commitment. See [Billing](/docs/cloud/billing/billing).
+
+### Does cache miss traffic cost more?
+
+Egress from origin to edge is metered separately. Tuning cache rules to raise hit ratio is the cheapest way to lower bills.
+
+### Are purges billed?
+
+Purges themselves are free. The next request after a purge is a cache miss and counts as origin egress.
+
+## Support
+
+24/7 support via console chat and email. Critical incidents get priority routing.

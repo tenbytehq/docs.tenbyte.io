@@ -1,0 +1,37 @@
+---
+title: 'IP Access Policy'
+sidebarTitle: 'IP Access'
+description: 'Allow or deny CDN requests by IP address or CIDR range.'
+icon: 'ethernet-port'
+---
+
+Control distribution access at the network level. Allow or deny individual IPs or full CIDR ranges.
+
+<Frame caption="IP Access Policy">
+    <img src="/images/cdn/26.png" alt="IP Access Policy" />
+</Frame>
+
+## Modes
+
+- **Allow by default** — anyone can access; you list IPs/ranges to block.
+- **Deny by default** — access blocked; you list IPs/ranges that may pass.
+
+## CIDR notation
+
+Use CIDR to express ranges in a single line.
+
+<Frame caption="CIDR Notation">
+    <img src="/images/cdn/50.png" alt="IP Access Policy" />
+</Frame>
+
+| Notation | Meaning |
+|----------|---------|
+| `203.0.113.42` | Single host |
+| `203.0.113.0/24` | 256 addresses (one /24 block) |
+| `10.0.0.0/8` | All `10.x.x.x` addresses |
+
+## When to use this
+
+- Restrict an internal staging origin to your office IP range.
+- Block known abusive IPs while keeping the rest open.
+- Limit a partner-only feed to their egress IPs.

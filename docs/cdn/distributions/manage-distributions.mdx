@@ -1,9 +1,83 @@
 ---
 title: 'Manage your CDN Distributions'
-description: 'View, update, and control your Tenbyte CDN distributions from a single dashboard.'
+description: 'List, update, disable, and delete Tenbyte CDN distributions from the console or API.'
 sidebarTitle: 'Manage Distributions'
-icon: 'notebook-pen'
+icon: 'settings-2'
 ---
-# Modify CDN Distribution Settings
 
-Review and update your CDN distributions, adjust settings, and monitor delivery behavior from one centralized dashboard.
+Day-2 operations for distributions: editing config, pausing traffic, deleting, and bulk-managing through the API.
+
+## Console actions
+
+From the CDN workspace, every distribution row has an **Action** menu:
+
+| Action | Effect | Reversible? |
+|--------|--------|-------------|
+| **Manage** | Opens the detail dashboard for the distribution. | n/a |
+| **Disable** | Pauses the distribution; hostname returns `503` until re-enabled. | Yes — re-enable from the same menu. |
+| **Delete** | Permanently removes the distribution and frees its hostname. | **No** — config and analytics are gone. |
+
+<Warning>
+    **Delete is final.** Disable first, watch traffic for 24 h, then delete. Edit DNS to remove any CNAME pointing at the distribution before deletion to avoid `503`s for live users.
+</Warning>
+
+## Edit configuration
+
+Open **Manage**, then use the left sidebar:
+
+| Tab | What you change |
+|-----|-----------------|
+| **Overview** | Name, description, see status. |
+| **Origins** | Swap origins, rotate S3 keys. |
+| **SSL** | Issue / upload certs, toggle HTTP/2 and HTTP/3. |
+| **Headers** | Host header, CORS, request / response header rules. |
+| **Cache Rules** | Per-path TTLs and cache-key behavior. |
+| **Access Rules** | Country / IP / referrer / token gates. |
+| **Image Optimizer** | Enable on-the-fly transforms. |
+
+All edits propagate within ~1 minute. The **Status** flips to `Updating` while config rolls out.
+
+## Manage via API
+
+List distributions:
+
+```bash
+curl -sS "https://api.tenbyte.io/cdn/distributions" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN" | jq '.data[] | {id, name, domain, status}'
+```
+
+Update config:
+
+```bash
+curl -X PATCH "https://api.tenbyte.io/cdn/distributions/$DISTRIBUTION_ID" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"description": "Owned by web-platform team. Runbook: wiki/cdn-prod"}'
+```
+
+Disable / enable:
+
+```bash
+curl -X POST "https://api.tenbyte.io/cdn/distributions/$DISTRIBUTION_ID/disable" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN"
+
+curl -X POST "https://api.tenbyte.io/cdn/distributions/$DISTRIBUTION_ID/enable" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN"
+```
+
+Delete (only after disable + DNS cleanup):
+
+```bash
+curl -X DELETE "https://api.tenbyte.io/cdn/distributions/$DISTRIBUTION_ID" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN"
+```
+
+See the [CDN API reference](/api-reference/cdn) for exact field shapes.
+
+## Operational tips
+
+- **Tag in description** — owner, runbook URL, on-call rotation. The console exposes `Description` in lists; helps incident response.
+- **One distribution per environment** — separate `prod`, `staging`, `dev`. Lets you change config in staging without risking prod.
+- **Version your config** — keep the API JSON payload in your IaC repo. PR-review changes before applying.
+- **Audit before delete** — confirm zero traffic via [Analytics](/docs/cdn/analytics/overview) for at least 24 h.
+- **DNS first, then disable** — flipping the order causes a brief outage for live users.

@@ -1,0 +1,28 @@
+---
+title: 'Referrer Access Policy'
+sidebarTitle: 'Referrer Access'
+description: 'Allow or deny CDN requests based on the HTTP Referer header to prevent hotlinking.'
+icon: 'external-link'
+---
+
+Control which sites can embed or link to your CDN content based on the HTTP `Referer` header.
+
+<Frame caption="Referrer Access Policy">
+    <img src="/images/cdn/27.png" alt="Referrer Access Policy" />
+</Frame>
+
+## Modes
+
+- **Allow by default** — every referrer can fetch content; list domains to block.
+- **Deny by default** — only domains in your allowlist can fetch content.
+
+Add allowed or blocked domains under **Specify Domain(s)**.
+
+## When to use this
+
+- Stop other sites from hotlinking your images, videos, or downloads.
+- Pin your video player to a known set of partner sites.
+
+<Warning>
+    The `Referer` header is sent by the client and can be spoofed or stripped. For high-value content, combine referrer rules with [Token Authentication](/docs/cdn/distributions/access-rules/token-authentication).
+</Warning>

@@ -1,50 +1,156 @@
 ---
 title: 'Configure HTTP Headers'
 sidebarTitle: 'Headers'
-icon: 'server'
+description: 'Control Host, CORS, request, and response headers at the edge. Includes security header recipes and curl verification.'
+icon: 'arrow-down-up'
 ---
 
-Configure HTTP headers for your Tenbyte CDN distribution to control caching behavior, security policies, and request handling at the edge.
+Header rules let you rewrite, add, or strip HTTP headers at the edge — without touching your origin. Use them for routing (Host), browser policy (CORS, security headers), and observability (request tagging).
 
-## Host Header
-- Specify the custom Host Header that your CDN servers will use when requesting content from your origin server.
+## Header types
 
-    <Frame caption="Host Header">
-        <img src="/images/cdn/22.png" alt="Host Header" />
-    </Frame>
+| Type | Direction | Common use |
+|------|-----------|------------|
+| **Host header** | Edge → origin | Virtual hosting, SNI matching. |
+| **CORS** | Edge → browser | Allow cross-origin XHR / fetch. |
+| **Request header** | Edge → origin | Tag requests, forward auth tokens. |
+| **Response header** | Edge → browser | Cache-control, security, custom branding. |
 
-- Enable the **Host Header** toggle.
-- Enter the **Key** and the **Value**.
+## Host header
 
---- 
+<Frame caption="Host Header">
+    <img src="/images/cdn/22.png" alt="Host Header" />
+</Frame>
 
-## CORS Headers
-- Control how resources are shared across different origins by enabling Cross-Origin Resource Sharing (CORS).
+Toggle **Host Header** on, then set:
 
-    <Frame caption="CORS Headers">
-        <img src="/images/cdn/23.png" alt="CORS Headers" />
-    </Frame>
+| Field | Example |
+|-------|---------|
+| **Key** | `Host` |
+| **Value** | `origin.example.com` |
 
-- Enable the **CORS Headers** toggle.
-- Choose either **`"*"`** (to allow all origins) or specify a **Specific Origin**. If you select **Specify Origin** you need to provide your **Origin Domain**
+Set this when your origin uses virtual hosting or its TLS cert is for a name other than the distribution hostname.
 
---- 
+## CORS headers
 
-## Request Header
-- Add custom headers to requests sent from the CDN to your origin.
-- Enable the Request Header toggle and click **Add Header** to specify the header and its value.
+<Frame caption="CORS Headers">
+    <img src="/images/cdn/23.png" alt="CORS Headers" />
+</Frame>
 
---- 
+Toggle **CORS Headers** on. Pick:
 
-## Response Header
-The Response Header section in the CDN settings allows you to modify or add headers that are returned to users from the CDN. This can help with controlling how responses are handled or customized.
-- Enable the **Response Header toggle** and click **Add Header** to set the header and its value.
-- Modify or add headers that will be returned from the CDN to users.
+- **`*`** — allow any origin (fine for fully public assets).
+- **Specify Origin** — allowlist a domain (e.g. `https://app.yoursite.com`). The CDN echoes that exact origin in `Access-Control-Allow-Origin` only when the request matches.
 
-    <Frame caption="Response Header">
-        <img src="/images/cdn/48.png" alt="Response Header" />
-    </Frame>
+<Warning>
+    Don't use `*` for any URL that requires credentials (cookies, `Authorization` header). Browsers block credentialed cross-origin requests against `*`. Use a specific origin.
+</Warning>
 
-    1. **Add**: You can add a custom header to the response. 
-    2. **Hide**: The Hide action allows you to prevent a specific header from being returned in the response. In this case, the Host header would not be shown in the response headers sent to the user.
+Verify with curl:
 
+```bash
+curl -sSI -H "Origin: https://app.yoursite.com" "$CDN_HOST/api/data" \
+  | grep -i 'access-control'
+```
+
+Expected:
+
+```text
+access-control-allow-origin: https://app.yoursite.com
+access-control-allow-methods: GET, POST, OPTIONS
+```
+
+## Request headers
+
+Toggle **Request Header** on, click **Add Header**, then set name + value. The header is added to every origin fetch.
+
+Use cases:
+
+- **Tagging** — `X-Edge-Pop: <auto>` for log correlation.
+- **Auth forwarding** — pin an `Authorization: Bearer ...` for a private origin.
+- **Routing** — `X-Tenant: prod` so a multi-tenant origin picks the right backend.
+
+```text
+Add Header → "X-CDN-Source": "tenbyte"
+```
+
+## Response headers
+
+<Frame caption="Response Header">
+    <img src="/images/cdn/48.png" alt="Response Header" />
+</Frame>
+
+Two actions:
+
+| Action | Effect |
+|--------|--------|
+| **Add** | Append a header on the way out (overrides origin if same name). |
+| **Hide** | Strip a header from the response (e.g. `Server`, `X-Powered-By`). |
+
+### Security header recipe
+
+A reasonable baseline for static / SPA distributions:
+
+| Header | Value |
+|--------|-------|
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains; preload` |
+| `X-Content-Type-Options` | `nosniff` |
+| `X-Frame-Options` | `DENY` |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` |
+| `Permissions-Policy` | `geolocation=(), camera=(), microphone=()` |
+| `Content-Security-Policy` | App-specific; start with `default-src 'self'`. |
+
+Verify:
+
+```bash
+curl -sSI "$CDN_HOST/" | grep -iE 'strict-transport|x-content|x-frame|referrer|permissions|content-security'
+```
+
+### Hide leaky headers
+
+```text
+Hide → "Server"
+Hide → "X-Powered-By"
+```
+
+These leak origin software versions. Strip them at the edge.
+
+## Response cache headers
+
+Add `Cache-Control` at the edge to override or supplement origin headers:
+
+| Asset class | `Cache-Control` |
+|-------------|-----------------|
+| Hashed JS / CSS | `public, max-age=31536000, immutable` |
+| HTML entry point | `public, max-age=60, must-revalidate` |
+| Private API JSON | `private, no-store` |
+
+For path-specific TTLs, prefer [Cache rules](/docs/cdn/distributions/cache-rules) — they affect the **edge cache**, while a `Cache-Control` response header instructs the **browser**.
+
+## Manage via API
+
+```bash
+curl -X PUT "https://api.tenbyte.io/cdn/distributions/$DISTRIBUTION_ID/headers" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "host": {"enabled": true, "value": "origin.example.com"},
+    "cors": {"enabled": true, "origin": "https://app.yoursite.com"},
+    "response_add": [
+      {"name": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains"},
+      {"name": "X-Content-Type-Options", "value": "nosniff"}
+    ],
+    "response_hide": ["Server", "X-Powered-By"]
+  }'
+```
+
+See the [CDN API reference](/api-reference/cdn) for the canonical schema.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---------|-----|
+| CORS preflight fails (`OPTIONS` returns no headers) | Add `OPTIONS` to allowed methods, or enable CORS Headers. |
+| Browser blocks credentialed request | Replace `*` with a specific origin and add `Access-Control-Allow-Credentials: true` via response header. |
+| Origin gets wrong vhost | Host header missing or wrong. |
+| Security header missing on some paths | Header rules apply distribution-wide; check for cache-poisoned responses cached before the rule was added — purge the path. |

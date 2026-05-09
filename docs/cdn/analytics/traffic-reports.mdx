@@ -1,24 +1,69 @@
 ---
 title: 'Traffic Served'
 sidebarTitle: 'Traffic Served'
-icon: 'traffic-cone'
+description: 'Track bandwidth delivered through the CDN, spot trends, and pull totals via API for billing and capacity reports.'
+icon: 'gauge'
 ---
 
-The Traffic Served section displays the total amount of bandwidth delivered through the CDN over time. 
+Traffic Served measures the bytes the CDN sent to clients in a given window. It drives your bandwidth bill and signals whether traffic patterns are shifting under you.
 
-    <Frame caption="Traffic Served Staistics">
-        <img src="/images/cdn/41.png" alt="Traffic Served Staistics" />
-    </Frame>
+<Frame caption="Traffic Served Statistics">
+    <img src="/images/cdn/41.png" alt="Traffic Served Statistics" />
+</Frame>
 
-## What it tells you:
+## What it tells you
 
-- How much bandwidth your content consumed.
-- Whether usage increased or decreased compared to the previous period.
-- How traffic trends shift over time.
+- Total bytes delivered to end users.
+- Period-over-period change (today vs yesterday, week vs week).
+- Trend lines that surface launches, viral spikes, and outages.
 
---- 
+## How to read the chart
 
-## How to read it:
-- The main number shows total KB delivered.
-- The percentage compares today’s traffic with the previous day.
+| Element | Meaning |
+|---------|---------|
+| Main number | Total bytes (KB / MB / GB / TB) for the selected window. |
+| Percentage | Change vs the prior identical window. Positive = growth. |
+| Sparkline | Distribution over time — find spikes and dips. |
 
+## Pull via API
+
+```bash
+curl -sS "https://api.tenbyte.io/cdn/distributions/$DISTRIBUTION_ID/analytics/traffic?from=2026-05-01T00:00:00Z&to=2026-05-09T00:00:00Z&granularity=hour" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN" | jq
+```
+
+Response (truncated):
+
+```json
+{
+  "total_bytes": 1283456789012,
+  "series": [
+    {"ts": "2026-05-01T00:00:00Z", "bytes": 5012345678},
+    {"ts": "2026-05-01T01:00:00Z", "bytes": 5234567890}
+  ]
+}
+```
+
+See the [CDN API reference](/api-reference/cdn) for filters (`granularity`, per-PoP breakdown).
+
+## Common patterns
+
+| Pattern | What it usually means |
+|---------|----------------------|
+| Steady daytime peaks | Healthy — track week-over-week ratio. |
+| Sudden spike with low cache-hit ratio | Origin will feel it. Check [cache hit ratio](/docs/cdn/analytics/cache-hit-ratio) and rule TTLs. |
+| Spike with stable hit ratio | Real traffic growth. Capacity-plan origin. |
+| Sustained drop | DNS issue, broken deploy, or upstream redirect bypassing the CDN. |
+
+## Cost levers
+
+- **Raise cache hit ratio.** Higher HIT% = same user-facing bytes, less origin egress.
+- **Compress text.** Enable Gzip / Brotli in [cache rules](/docs/cdn/distributions/cache-rules).
+- **Right-size images.** Use [Image Optimizer](/docs/cdn/distributions/image-optimizer) with `format=auto` and capped widths.
+- **Cap query-string variants.** A noisy cache key duplicates the same bytes.
+
+## Operational tips
+
+- **Daily totals to finance.** Pipe API totals into your billing spreadsheet or BI tool.
+- **Per-path breakdowns.** Use the path filter to find the top 10 bandwidth consumers; cache or compress them harder.
+- **Alert on rate, not total.** A 5× hourly spike is more actionable than absolute totals.

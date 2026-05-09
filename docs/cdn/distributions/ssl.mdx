@@ -1,31 +1,109 @@
 ---
 title: 'SSL Management'
 sidebarTitle: 'SSL'
-icon: 'scroll-text'
+description: 'Issue or upload SSL certificates, configure SNI, force HTTPS, and enable HTTP/2 / HTTP/3 on your distribution.'
+icon: 'lock'
 ---
 
-Manage SSL certificates for your CDN distribution to secure delivery URLs and ensure encrypted traffic between users and the CDN.
+Every Tenbyte CDN distribution serves over TLS. You pick how the cert is provisioned and tune protocol-level options like SNI, redirects, and HTTP/2 / HTTP/3.
 
-## Choose Your SSL Type
-You can select one of the following SSL options:
+## SSL types
 
-1. **Tenbyte SSL (Free)**: This option automatically provides an SSL certificate for your distribution. 
-2. **Let's Encrypt SSL**: It ensures secure HTTPS traffic, but you will need to complete the setup steps.
-3. **Custom SSL**: If you have your own SSL certificate, you can upload it for use with your CDN distribution.
+<Frame caption="Choose Your SSL Type">
+    <img src="/images/cdn/20.png" alt="Origin" />
+</Frame>
 
-    <Frame caption="Choose Your SSL Type">
-        <img src="/images/cdn/20.png" alt="Origin" />
-    </Frame>
+| Type | DNS validation | Best for |
+|------|----------------|----------|
+| **Tenbyte SSL (Free)** | Automatic | System-generated `*.tenbytecdn.com` host. Zero setup. |
+| **Let's Encrypt** | Domain validation via HTTP-01 / DNS-01 | Custom domains where you control DNS. Free, auto-renews. |
+| **Custom SSL** | You manage | Bring-your-own cert (EV, wildcard, internal CA, multi-SAN). |
 
---- 
+## Provision a certificate
 
-## Additional SSL Settings
-Here you can configure other settings related to SSL:
+### Tenbyte SSL (free)
 
-1. **SNI Hostname**: Set the hostname used for the SSL handshake. 
-2. **Redirect HTTP to HTTPS**: Enable this option to automatically redirect users who access your content via HTTP to the secure HTTPS version. 
-3. **HTTP/2 and HTTP/3**: You can enable or disable support for HTTP/2 and HTTP/3. These newer versions of HTTP offer improved performance and reduced latency for faster content delivery.
+Auto-issued for the system-generated hostname. Nothing to configure.
 
-    <Frame caption="Additional Settings">
-        <img src="/images/cdn/21.png" alt="Origin" />
-    </Frame>
+### Let's Encrypt
+
+1. Pick **Let's Encrypt** as the SSL type.
+2. Confirm the custom domain CNAMEs to your distribution:
+   ```bash
+   dig +short cdn.yoursite.com CNAME
+   # cdn.yoursite.com.   CNAME   your-distribution.tenbytecdn.com.
+   ```
+3. Click **Issue certificate**. Validation runs automatically.
+4. Status moves from `Pending` → `Active` once issued. Auto-renewal handles future cycles.
+
+### Custom SSL
+
+Upload an existing cert. See [Custom Certificates](/docs/cdn/certificates/custom-certificates) for the full upload flow and PEM format.
+
+## Verify the cert
+
+```bash
+openssl s_client -connect cdn.yoursite.com:443 -servername cdn.yoursite.com </dev/null \
+  2>/dev/null | openssl x509 -noout -subject -issuer -dates
+```
+
+Expected output:
+
+```text
+subject=CN = cdn.yoursite.com
+issuer=C = US, O = Let's Encrypt, CN = R3
+notBefore=May  9 00:00:00 2026 GMT
+notAfter=Aug  7 23:59:59 2026 GMT
+```
+
+For browsers, hit the URL and check the lock icon. SSL Labs (`https://www.ssllabs.com/ssltest/`) gives you a deeper grade.
+
+## Additional SSL settings
+
+<Frame caption="Additional Settings">
+    <img src="/images/cdn/21.png" alt="Origin" />
+</Frame>
+
+| Setting | What it does | When to use |
+|---------|--------------|-------------|
+| **SNI Hostname** | Sent during the TLS handshake. | Set if your origin's TLS cert doesn't match the distribution hostname. |
+| **Redirect HTTP → HTTPS** | Sends `301` for any plain-HTTP request. | Always on for production. |
+| **HTTP/2** | Multiplexed connections. | Always on — universally supported. |
+| **HTTP/3 (QUIC)** | UDP-based transport, faster on lossy networks. | On for end-user-facing distributions; off if you have strict-firewall users. |
+
+### Verify the protocol
+
+```bash
+# HTTP/2
+curl --http2 -o /dev/null -sS -w 'HTTP version: %{http_version}\n' "https://cdn.yoursite.com/"
+
+# HTTP/3
+curl --http3 -o /dev/null -sS -w 'HTTP version: %{http_version}\n' "https://cdn.yoursite.com/"
+```
+
+## Renewal and rotation
+
+| Cert type | Renewal |
+|-----------|---------|
+| Tenbyte SSL | Automatic. No action needed. |
+| Let's Encrypt | Automatic, ~30 days before expiry. Failures emit a webhook. |
+| Custom SSL | **You** are responsible. Watch `notAfter` and upload the new cert before it expires. |
+
+For custom certs, set a calendar reminder 30 days before `notAfter` and a hard alert 7 days before.
+
+## Operational tips
+
+- **Mixed-content audits** — once HTTPS redirect is on, scan your site for `http://` asset URLs.
+- **HSTS** — add `Strict-Transport-Security` via [response headers](/docs/cdn/distributions/headers) only after you're sure all subdomains are HTTPS.
+- **Cipher / version** — Tenbyte CDN serves TLS 1.2 and 1.3 with modern cipher suites. Older clients (XP, ancient Android) won't connect.
+- **Origin TLS** — the edge talks TLS to your origin too. If you use a self-signed cert, mark the origin as such; otherwise the cert must validate.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---------|-----|
+| Cert stuck at `Pending` | DNS not resolving to the distribution. Confirm CNAME and wait for TTL to expire. |
+| Browser shows cert mismatch | SNI Hostname misconfigured, or DNS resolves to a different distribution. |
+| Origin handshake fails | Set the SNI Hostname to match the origin's cert CN. |
+| Mixed-content warnings | Your HTML still references `http://...` assets. Update or rely on protocol-relative URLs. |
+| HTTP/3 not negotiated | Client or network blocks UDP/443. Falls back to HTTP/2 silently. |

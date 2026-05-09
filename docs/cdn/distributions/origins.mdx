@@ -1,39 +1,147 @@
 ---
 title: 'Manage your CDN Origins'
 sidebarTitle: 'Origins'
-icon: 'map-pinned'
+description: 'Connect a hostname or S3-compatible bucket as your distribution origin. Includes connectivity checks, IAM scoping, and failure modes.'
+icon: 'database'
 ---
 
-In this section, you can add, edit, or remove origin sources for your CDN distribution. 
+The **origin** is the upstream Tenbyte CDN pulls from on cache miss. You can attach a hostname/IP or an S3-compatible bucket. The edge then caches the response per your rules.
 
-1. **Hostname**: You can add an origin by specifying the hostname.
-2. **S3 Bucket**: For cloud storage, you can use an S3 Bucket as your origin.
+## Origin types
 
+| Type | When to use |
+|------|-------------|
+| **Hostname** | Web servers, app servers, load balancers, anywhere reachable by HTTP(S). |
+| **S3 Bucket** | AWS S3, Cloudflare R2, DigitalOcean Spaces, Tenbyte T2 Object Storage, MinIO — anything S3-compatible. |
 
-## Choose Your Origin Type
-Select either **Hostname** or **S3 Bucket** to define the type of origin you want to use.
+## Hostname origin
 
---- 
+<Frame caption="Origin for Hostname">
+    <img src="/images/cdn/18.png" alt="Origin" />
+</Frame>
 
-## Configure Your Origin
+| Field | Notes |
+|-------|-------|
+| **Origin Label** | Internal identifier for logs and dashboards. |
+| **Domain / IP** | FQDN (`origin.example.com`) or IP. The edge talks HTTPS by default. |
 
-- **For Hostname**: Enter the Origin Name and the Domain / IP address.
+Verify reachability before saving:
 
-    <Frame caption="Origin for Hostname">
-        <img src="/images/cdn/18.png" alt="Origin" />
-    </Frame>
+```bash
+curl -sSI "https://origin.example.com/healthz"
+# expect 200 OK
+```
 
-- **For S3 Bucket**: Enter the Origin Label, Endpoint, Access Key ID, Secret Access Key, Bucket Name, and Region for your S3 origin.
+If the origin uses virtual hosting or has a TLS cert for a different name, set a custom **Host header** in [Headers](/docs/cdn/distributions/headers).
 
-    <Frame caption="Origin for S3 Bucket">
-        <img src="/images/cdn/19.png" alt="Origin" />
-    </Frame>
+## S3-compatible origin
 
---- 
+<Frame caption="Origin for S3 Bucket">
+    <img src="/images/cdn/19.png" alt="Origin" />
+</Frame>
 
-## Update your Origins
-- Once you’ve entered the required information, click **Update Origins** to save the new origin.
+| Field | Example |
+|-------|---------|
+| **Origin Label** | `prod-assets-s3` |
+| **Endpoint / Hostname** | `s3.us-east-1.amazonaws.com` |
+| **Access Key ID** | from your IAM user / service account |
+| **Secret Access Key** | injected once, stored encrypted |
+| **Bucket** | bucket name only, no path |
+| **Region** | bucket region (`us-east-1`, `eu-west-1`, etc.) |
 
-    <Frame caption="Update your Origins">
-        <img src="/images/cdn/47.png" alt="Update your Origin" />
-    </Frame>
+### Endpoint cheat sheet
+
+| Provider | Endpoint |
+|----------|----------|
+| AWS S3 (regional) | `s3.<region>.amazonaws.com` |
+| Cloudflare R2 | `<account-id>.r2.cloudflarestorage.com` |
+| DigitalOcean Spaces | `<region>.digitaloceanspaces.com` |
+| Backblaze B2 (S3 API) | `s3.<region>.backblazeb2.com` |
+| Tenbyte T2 | `s3.tenbyte.io` |
+| MinIO | your MinIO host |
+
+### Least-privilege IAM
+
+Use a **read-only** key scoped to the bucket / prefix you're serving. Example AWS policy:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:ListBucket"],
+      "Resource": [
+        "arn:aws:s3:::my-bucket",
+        "arn:aws:s3:::my-bucket/*"
+      ]
+    }
+  ]
+}
+```
+
+### Verify before saving
+
+```bash
+aws s3 ls "s3://my-bucket/" \
+  --endpoint-url "https://s3.us-east-1.amazonaws.com" \
+  --region us-east-1
+
+aws s3api get-object \
+  --bucket my-bucket --key index.html \
+  --endpoint-url "https://s3.us-east-1.amazonaws.com" \
+  --region us-east-1 /tmp/out.html
+```
+
+If both work locally with the same key, the CDN will work too.
+
+## Update origins
+
+After editing fields, click **Update Origins**.
+
+<Frame caption="Update your Origins">
+    <img src="/images/cdn/47.png" alt="Update your Origin" />
+</Frame>
+
+Distribution status flips to `Updating` until the new config rolls out (usually under a minute).
+
+## Manage via API
+
+```bash
+# Read current origin
+curl -sS "https://api.tenbyte.io/cdn/distributions/$DISTRIBUTION_ID/origins" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN" | jq
+
+# Replace origin
+curl -X PUT "https://api.tenbyte.io/cdn/distributions/$DISTRIBUTION_ID/origins" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "s3",
+    "label": "prod-assets-s3",
+    "hostname": "s3.us-east-1.amazonaws.com",
+    "bucket": "my-bucket",
+    "region": "us-east-1",
+    "access_key_id": "AKIA...",
+    "secret_access_key": "..."
+  }'
+```
+
+See [CDN API reference](/api-reference/cdn) for the exact field names.
+
+## Rotate S3 keys safely
+
+1. Create a new key pair on the IAM user (so two keys are active).
+2. Update the origin via the console or API with the new key.
+3. Confirm `x-cache: HIT` and a clean `MISS → HIT` transition for a fresh path.
+4. Deactivate / delete the old key in IAM.
+
+## Failure modes
+
+| Symptom | Likely cause |
+|---------|--------------|
+| `502 Bad Gateway` from CDN | Origin unreachable, port closed, TLS handshake failure. |
+| `403` from S3 origin | Key missing `s3:GetObject` or bucket policy denies. |
+| `404` for a known object | Bucket name wrong, region mismatch, or path includes the bucket prefix twice. |
+| Origin returns content but CDN serves nothing | Origin sent `Cache-Control: private` and `Never Cache` is also set. Check [cache rules](/docs/cdn/distributions/cache-rules). |
+| Wrong vhost served | Host header missing — configure it in [Headers](/docs/cdn/distributions/headers). |

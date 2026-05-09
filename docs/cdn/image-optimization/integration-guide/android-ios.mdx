@@ -1,31 +1,125 @@
 ---
-title: 'Android and iOS Apps'
+title: 'Android and iOS'
 sidebarTitle: 'Android & iOS'
-icon: 'braces'
+description: 'Generate optimized image URLs in native mobile apps. Java, Kotlin, Swift examples with width and DPR awareness.'
+icon: 'tablet-smartphone'
 ---
 
-You can deliver optimized images in your mobile apps with only a few small code changes. Tenbyte works with your existing setup, so you don’t need to modify your backend or storage flow.
+Native mobile apps benefit even more from image optimization than web — bandwidth is precious on mobile networks. Tenbyte transforms work over plain HTTP, so any networking library (OkHttp, URLSession, Glide, Coil, SDWebImage, Kingfisher) just works.
 
-Use the **`buildImageUrl()`** function to generate the optimized image URL. It detects the right dimensions for the device and returns a resized version of the image automatically.
+## Pattern
 
-## Android
-Generates a resized image URL based on the view’s width so the correct image size is fetched automatically.
+Compute a URL from the view's dimensions and the device's pixel density, then hand the URL to your image loader.
 
-```java Java
-Url buildImageUrl(View view, String baseImageUrl) {
-    int imageWidth = view.getWidth() - view.getPaddingLeft() - view.getPaddingRight();    
-    return baseImageUrl + "?w=" + Math.round(imageWidth);
+```text
+https://your-distribution.tenbytecdn.com/photo.jpg?width=<view_w>&dpr=<density>&format=auto&q=80
+```
+
+## Android (Java)
+
+```java
+public String buildImageUrl(View view, String baseImageUrl, float density) {
+    int width = view.getWidth() - view.getPaddingLeft() - view.getPaddingRight();
+    int dpr = Math.round(density);
+    return baseImageUrl
+        + (baseImageUrl.contains("?") ? "&" : "?")
+        + "width=" + width
+        + "&dpr=" + dpr
+        + "&format=auto&q=80";
 }
 ```
 
---- 
+Usage with Glide:
 
-## iOS
-Builds an optimized image URL by calculating the display width of the image view and appending it to the source URL.
+```java
+String url = buildImageUrl(imageView, "https://your-distribution.tenbytecdn.com/photo.jpg",
+    getResources().getDisplayMetrics().density);
 
-```swift Swift
+Glide.with(context).load(url).into(imageView);
+```
+
+## Android (Kotlin)
+
+```kotlin
+fun buildImageUrl(view: View, baseImageUrl: String, density: Float): String {
+    val width = view.width - view.paddingLeft - view.paddingRight
+    val dpr = density.toInt().coerceAtLeast(1)
+    val sep = if (baseImageUrl.contains("?")) "&" else "?"
+    return "$baseImageUrl${sep}width=$width&dpr=$dpr&format=auto&q=80"
+}
+```
+
+Usage with Coil:
+
+```kotlin
+val url = buildImageUrl(imageView, "https://your-distribution.tenbytecdn.com/photo.jpg",
+    resources.displayMetrics.density)
+
+imageView.load(url)
+```
+
+## iOS (Swift)
+
+```swift
 public func buildImageUrl(view: UIImageView, baseImageUrl: String) -> String {
-        let imageWidth = round(view.frame.width - view.layoutMargins.left - view.layoutMargins.right)
-        return baseImageUrl + "?w=" + "\(imageWidth)"
+    let width = Int(round(view.frame.width - view.layoutMargins.left - view.layoutMargins.right))
+    let dpr = Int(UIScreen.main.scale)
+    let sep = baseImageUrl.contains("?") ? "&" : "?"
+    return "\(baseImageUrl)\(sep)width=\(width)&dpr=\(dpr)&format=auto&q=80"
 }
 ```
+
+Usage with SDWebImage:
+
+```swift
+let url = buildImageUrl(view: imageView,
+    baseImageUrl: "https://your-distribution.tenbytecdn.com/photo.jpg")
+
+imageView.sd_setImage(with: URL(string: url))
+```
+
+Usage with Kingfisher:
+
+```swift
+imageView.kf.setImage(with: URL(string: url))
+```
+
+## iOS (SwiftUI)
+
+```swift
+import SwiftUI
+
+struct TenbyteImage: View {
+    let baseURL: String
+    let width: CGFloat
+
+    var body: some View {
+        let dpr = Int(UIScreen.main.scale)
+        let url = "\(baseURL)?width=\(Int(width))&dpr=\(dpr)&format=auto&q=80"
+        return AsyncImage(url: URL(string: url))
+    }
+}
+```
+
+## Tips
+
+- **Compute width after layout.** Calling before layout returns 0. Use `viewDidLayoutSubviews` (UIKit) / `onAppear` (SwiftUI) / view-tree observers (Android).
+- **Round to design tokens.** A `123 px` request and a `124 px` request are two different cache entries. Snap widths to `[160, 320, 480, 720, 1080]` etc.
+- **DPR clamp.** `dpr ≥ 4` rarely helps; clamp to `min(actualDpr, 3)`.
+- **Pre-fetch hero images** during splash / loading for fast first paint.
+- **Pair with library cache.** Glide/Coil/SDWebImage/Kingfisher all cache by URL — Tenbyte's cache + their disk cache = great offline UX.
+
+## Verify
+
+Run the app and inspect the request URL in your debugger or proxy (Charles, Proxyman):
+
+```text
+GET https://your-distribution.tenbytecdn.com/photo.jpg?width=300&dpr=3&format=auto&q=80
+```
+
+Response should be `content-type: image/webp` on Android (and `image/heic` or `image/webp` on iOS depending on negotiation).
+
+## Operational tips
+
+- **Don't ship the secret in the app.** If you use [Token Authentication](/docs/cdn/distributions/access-rules/token-authentication), sign URLs server-side and hand them to the app via your API. Never embed the secret in the binary.
+- **Long TTLs.** Image paths should have multi-month TTLs in [cache rules](/docs/cdn/distributions/cache-rules) — saves origin egress and helps offline scenarios.

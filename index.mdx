@@ -1,105 +1,231 @@
 ---
-title: 'Build and Deploy with Tenbyte'
+title: 'Tenbyte Developer Hub'
 icon: 'code-xml'
-sidebarTitle: 'Welcome to Tenbyte'
+sidebarTitle: 'Home'
+description: 'Tenbyte Developer Hub — Cloud, CDN, Vidinfra, and Live Streaming. Quickstarts, API references, SDKs, and operational guides in one place.'
 mode: "wide"
 ---
 
-Welcome to the **Tenbyte Developer Hub**. This guide shows what you can build on Tenbyte and helps you choose the right services, APIs, and tools, so you can move from idea to production without friction.
+Welcome to the **Tenbyte Developer Hub**. Pick a service, follow a quickstart, ship in production. Every guide assumes you'd rather see a `curl`, a config snippet, and a runbook than a wall of text.
 
 ## What is Tenbyte?
 
-Tenbyte is a cloud and video infrastructure provider operating with Tier III data centers and enterprise-grade hardware. It focuses on reliable compute, S3-compatible T2 block storage, global CDN delivery, and a complete video platform for streaming and media workflows
+Tenbyte is a cloud and video infrastructure provider running Tier III data centers and enterprise hardware. Reliable compute, S3-compatible storage, a global CDN, and a full video platform — all under one account, one bill, one API.
 
 ## Tenbyte Services
-<Columns cols={3}>
+
+<Columns cols={2}>
   <Card title="Tenbyte Cloud" icon="cloud" href="/docs/cloud" arrow="true">
-    Deploy and manage servers.
+    Virtual machines, block & object storage, VPC, firewall, and load balancers.
   </Card>
-  <Card title="Tenbyte CDN" icon="earth" href="/docs/cdn" arrow="true">
-    Speed up your delivery.
+  <Card title="Tenbyte CDN" icon="globe" href="/docs/cdn" arrow="true">
+    Global edge caching, image optimization, signed URLs, and a REST API.
   </Card>
-   <Card title="Tenbyte Vidinfra" icon="square-play" href="/docs/vidinfra" arrow="true">
-    Upload, encode, stream video.
+  <Card title="Tenbyte Vidinfra" icon="play-circle" href="/docs/vidinfra" arrow="true">
+    Upload, encode, secure, and stream on-demand video with DRM and watermarking.
+  </Card>
+  <Card title="Tenbyte Live Streaming" icon="radio" href="/docs/live-streaming" arrow="true">
+    Low-latency live ingest, encoding, and playback with HLS / DASH delivery.
   </Card>
 </Columns>
 
+## Pick a quickstart
+
+<Columns cols={2}>
+  <Card title="CDN in 10 minutes" icon="zap" href="/docs/cdn/quickstart" arrow="true">
+    Create a distribution, verify with curl, automate purges via the API.
+  </Card>
+  <Card title="Cloud in 10 minutes" icon="server" href="/docs/cloud/quickstart" arrow="true">
+    Spin up a VM, attach storage, configure networking.
+  </Card>
+  <Card title="Vidinfra first video" icon="send" href="/docs/vidinfra/publish-first-video" arrow="true">
+    Upload, transcode, and publish your first video.
+  </Card>
+  <Card title="Live in 10 minutes" icon="radio-tower" href="/docs/live-streaming/quickstart" arrow="true">
+    Set up an ingest endpoint and start streaming.
+  </Card>
+</Columns>
+
+## Developer essentials
+
+<Columns cols={3}>
+  <Card title="API Reference" icon="terminal" href="/api-reference/overview" arrow="true">
+    OpenAPI specs for CDN, Vidinfra, and Live.
+  </Card>
+  <Card title="API Keys" icon="key-round" href="/docs/organization/api-keys" arrow="true">
+    Generate tokens for CI/CD and SDKs.
+  </Card>
+  <Card title="SDKs" icon="file-code" href="/docs/vidinfra/sdk/uploader-sdk" arrow="true">
+    Player and uploader SDKs for the web and mobile.
+  </Card>
+</Columns>
+
+---
+
 ### Tenbyte Cloud
 
-**Tenbyte Cloud** gives you virtual machines and storage you can rely on for everyday workloads. You can deploy different servers, attach block storage, assign public IPs, and set up your own VPC environment.
+**Tenbyte Cloud** gives you virtual machines and storage you can rely on for everyday workloads. Deploy servers, attach block storage, assign public IPs, and stand up your own VPC.
 
-<Accordion title="Start Reading the Tenbyte Cloud Guides">
-  Explore the core components of Tenbyte Cloud. Each section explains how the feature works and how to use it in your projects.
+<Accordion title="Start Reading the Tenbyte Cloud Guides" icon="cloud">
+  Each guide walks through one component — what it does and how to use it.
 
-- [Virtual Machine](/docs/cloud/compute/cloud-vm)
-- [Load Balancer](/docs/cloud/compute/load-balancers)
-- [Block Storage](/docs/cloud/storage/block-storage)
-- [T2 Object Storage](/docs/cloud/storage/object-storage)
-- [Laravel with Tenbyte](/docs/cloud/storage/laravel-with-tenbyte)
-- [Backup](/docs/cloud/storage/backup)
-- [Snapshots](/docs/cloud/storage/snapshots)
-- [Virtual Private Cloud](/docs/cloud/networking/vpc)
-- [Firewall](/docs/cloud/networking/firewall)
-- [Access Delegation](/docs/cloud/networking/manage-access)
-- [Metrics](/docs/cloud/monitoring/metrics)
-- [Billing](/docs/cloud/billing/billing)
+  **Getting started**
+  - [Cloud Quickstart](/docs/cloud/quickstart)
+  - [Account Setup](/docs/cloud/account-setup)
+  - [Cloud-init Config](/docs/cloud/cloud-init-config)
+  - [Cloud FAQs](/docs/cloud/cloud-faqs)
 
+  **Compute**
+  - [Virtual Machine](/docs/cloud/compute/cloud-vm)
+  - [Load Balancer](/docs/cloud/compute/load-balancers)
+
+  **Storage**
+  - [Block Storage](/docs/cloud/storage/block-storage)
+  - [T2 Object Storage](/docs/cloud/storage/object-storage)
+  - [Laravel with Tenbyte](/docs/cloud/storage/laravel-with-tenbyte)
+  - [SDKs (Go, Python, JavaScript, Java, PHP, Ruby, .NET)](/docs/cloud/storage/sdk-for-go)
+
+  **Backup**
+  - [Snapshots](/docs/cloud/backup/snapshots)
+  - [Backup](/docs/cloud/backup/backup)
+
+  **Networking & Security**
+  - [Virtual Private Cloud](/docs/cloud/networking/vpc)
+  - [Firewall](/docs/cloud/networking/firewall)
+  - [Access Delegation](/docs/cloud/networking/manage-access)
+
+  **Operations**
+  - [Metrics](/docs/cloud/monitoring/metrics)
+  - [Billing](/docs/cloud/billing/billing)
 </Accordion>
 
-### Tenbyte Content Delivery Network (CDN)
+---
 
-**Tenbyte CDN** helps websites, apps, and video platforms load faster. It uses a mix of global PoPs, local PoPs, and Multi-CDN routing so users get shorter load times no matter where they are.
+### Tenbyte CDN
 
-<Accordion title="Start Reading the Tenbyte CDN Guides">
-  This section collects the main parts of the CDN service. Each guide walks through how the feature works and how to use it when setting up or managing a distribution.
+**Tenbyte CDN** speeds up websites, apps, and video platforms. Anycast routing across global PoPs, edge caching with full rule control, image optimization, and signed URLs for protected content.
 
-- [Create Distributions](/docs/cdn/distributions/create-distribution)
-- [Distribution Overview](/docs/cdn/distributions/distribution-overview)
-- [Origins](/docs/cdn/distributions/origins)
-- [SSL Certificate](/docs/cdn/distributions/ssl)
-- [Headers](/docs/cdn/distributions/headers)
-- [Access Rules](/docs/cdn/distributions/access-rules)
-- [Cache Rules](/docs/cdn/distributions/cache-rules)
-- [Image Optimizer](/docs/cdn/distributions/image-optimizer)
-- [Traffic Reports](/docs/cdn/analytics/traffic-reports)
-- [Cache Hit Ratio](/docs/cdn/analytics/cache-hit-ratio)
-- [Response Classes](/docs/cdn/analytics/response-classes)
-- [Purge by Pattern](/docs/cdn/purge/purge-by-pattern)
-- [Purge All](/docs/cdn/purge/purge-all)
-- [Custom Certificates](/docs/cdn/certificates/custom-certificates)
+<Accordion title="Start Reading the Tenbyte CDN Guides" icon="globe">
+  Walk through CDN end-to-end — set up a distribution, tune cache, secure content, automate via API.
 
+  **Getting started**
+  - [What is Tenbyte CDN?](/docs/cdn)
+  - [Quickstart](/docs/cdn/quickstart)
+  - [FAQs](/docs/cdn/cdn-faqs)
+
+  **Distributions**
+  - [Create a Distribution](/docs/cdn/distributions/create-distribution)
+  - [Distribution Overview](/docs/cdn/distributions/distribution-overview)
+  - [Manage Distributions](/docs/cdn/distributions/manage-distributions)
+  - [Origins](/docs/cdn/distributions/origins)
+  - [SSL](/docs/cdn/distributions/ssl)
+  - [Headers](/docs/cdn/distributions/headers)
+  - [Cache Rules](/docs/cdn/distributions/cache-rules)
+  - [Image Optimizer](/docs/cdn/distributions/image-optimizer)
+
+  **Access & Security**
+  - [Access Rules Overview](/docs/cdn/distributions/access-rules/overview)
+  - [Country Access Policy](/docs/cdn/distributions/access-rules/country-access-policy)
+  - [IP Access Policy](/docs/cdn/distributions/access-rules/ip-access-policy)
+  - [Referrer Access Policy](/docs/cdn/distributions/access-rules/referrer-access-policy)
+  - [Token Authentication (Signed URLs)](/docs/cdn/distributions/access-rules/token-authentication)
+
+  **Analytics**
+  - [Analytics Overview](/docs/cdn/analytics/overview)
+  - [Traffic Served](/docs/cdn/analytics/traffic-reports)
+  - [Requests Served](/docs/cdn/analytics/request-served)
+  - [Cache Hit Ratio](/docs/cdn/analytics/cache-hit-ratio)
+  - [Response Classes](/docs/cdn/analytics/response-classes)
+
+  **Purge**
+  - [Purge by Pattern](/docs/cdn/purge/purge-by-pattern)
+  - [Purge All](/docs/cdn/purge/purge-all)
+
+  **Certificates**
+  - [SSL Overview](/docs/cdn/certificates/ssl-overview)
+  - [Let's Encrypt](/docs/cdn/certificates/lets-encrypt)
+  - [Custom Certificates](/docs/cdn/certificates/custom-certificates)
+
+  **Image Optimization**
+  - [Integration Overview](/docs/cdn/image-optimization/integration-guide)
+  - Frameworks: [Next.js](/docs/cdn/image-optimization/integration-guide/nextjs) · [Nuxt](/docs/cdn/image-optimization/integration-guide/nuxt) · [Astro](/docs/cdn/image-optimization/integration-guide/astro) · [React Native](/docs/cdn/image-optimization/integration-guide/react-native) · [Android & iOS](/docs/cdn/image-optimization/integration-guide/android-ios) · [Shopify](/docs/cdn/image-optimization/integration-guide/shopify)
 </Accordion>
+
+---
 
 ### Tenbyte Vidinfra
 
-**Vidinfra** is Tenbyte’s video platform. It takes care of upload, encoding, storage, and playback, and it works for both live and on-demand video. 
+**Vidinfra** is Tenbyte's on-demand video platform. Upload, encode, secure, and play back — both live and VOD — with DRM, dynamic watermarking, and access controls.
 
-<Accordion title="Start Reading the Tenbyte Vidinfra Guides">
-  This section covers the main parts of the Vidinfra platform. Each guide explains how the feature works and how to use it when uploading, encoding, delivering, or managing video content.
+<Accordion title="Start Reading the Tenbyte Vidinfra Guides" icon="play-circle">
+  **Getting started**
+  - [What is Vidinfra?](/docs/vidinfra)
+  - [Quickstart](/docs/vidinfra/quickstart)
+  - [Publish your First Video](/docs/vidinfra/publish-first-video)
+  - [FAQs](/docs/vidinfra/video-faqs)
 
-- [Manage Library Settings](/docs/vidinfra/manage-library/library-settings)
-- [Library Analytics](/docs/vidinfra/manage-library/analytics)
-- [Upload Videos](/docs/vidinfra/manage-videos/upload-videos)
-- [Video Settings](/docs/vidinfra/manage-videos/video-settings)
-- [Player Themes](/docs/vidinfra/player-customization/player-themes)
-- [Adaptive Bitrate Streaming](/docs/vidinfra/transcoding-drm/adaptive-bitrate-streaming)
-- [DRM Integration](/docs/vidinfra/transcoding-drm/drm-integration)
-- [Dynamic Watermark](/docs/vidinfra/security/dynamic-watermark)
-- [Country Access Policy](/docs/vidinfra/security/country-access-policy)
-- [Referrer Policy](/docs/vidinfra/security/referrer-policy)
-- [Webhook Dashboard](/docs/vidinfra/webhooks/webhook-dashboard)
-- [Setup Webhook](/docs/vidinfra/webhooks/setup-webhooks)
+  **Manage Library**
+  - [Library Overview](/docs/vidinfra/manage-library/overview)
+  - [Library Settings](/docs/vidinfra/manage-library/library-settings)
+  - [Analytics](/docs/vidinfra/manage-library/analytics)
 
+  **Manage Videos**
+  - [Upload Videos](/docs/vidinfra/manage-videos/upload-videos)
+  - [Video Settings](/docs/vidinfra/manage-videos/video-settings)
+
+  **Player & Transcoding**
+  - [Player Themes](/docs/vidinfra/player-customization/player-themes)
+  - [Adaptive Bitrate Streaming](/docs/vidinfra/transcoding-drm/adaptive-bitrate-streaming)
+  - [DRM Integration](/docs/vidinfra/transcoding-drm/drm-integration)
+
+  **Security**
+  - [Dynamic Watermark](/docs/vidinfra/security/dynamic-watermark)
+  - [Country Access Policy](/docs/vidinfra/security/country-access-policy)
+  - [Referrer Policy](/docs/vidinfra/security/referrer-policy)
+
+  **Webhooks & SDKs**
+  - [Webhook Dashboard](/docs/vidinfra/webhooks/webhook-dashboard)
+  - [Setup Webhook](/docs/vidinfra/webhooks/setup-webhooks)
+  - [Player SDK](/docs/vidinfra/sdk/player-sdk)
+  - [Uploader SDK](/docs/vidinfra/sdk/uploader-sdk)
 </Accordion>
 
-## Why Users Choose Tenbyte
-Tenbyte keeps things simple:
+---
 
-- Pricing is predictable and billed in differrnt local currency.
-- Tier III data centers and enterprise hardware provide steady performance.
-- Compute, storage, CDN, and video tools live in one place.
-- A regional support team is available at any hour.
+### Tenbyte Live Streaming
 
-> These points make Tenbyte easier to work with compared to platforms that depend on international routing or currency conversion.
+**Live Streaming** delivers low-latency live video. Push from your encoder over RTMP / SRT / WebRTC, transcode in real time, and play back via HLS or DASH worldwide.
 
-If you already feel confident with these guides, you’re welcome to browse the [Tenbyte website](https://beta.tenbyte.io/) to explore our platform further.
+<Accordion title="Start Reading the Tenbyte Live Streaming Guides" icon="radio">
+  **Getting started**
+  - [What is Live Streaming?](/docs/live-streaming)
+  - [Quickstart](/docs/live-streaming/quickstart)
+  - [How Live Streaming Works](/docs/live-streaming/live-work)
+  - [FAQs](/docs/live-streaming/live-faqs)
+
+  **Manage Streams**
+  - [Manage Live Streams](/docs/live-streaming/manage-streams)
+
+  **Ingest & Encoding**
+  - [Configuration](/docs/live-streaming/ingest-and-encoding/configuration)
+  - [Ingest Protocols](/docs/live-streaming/ingest-and-encoding/ingest-protocols)
+  - [Output Protocols](/docs/live-streaming/ingest-and-encoding/output-protocols)
+  - [Encoding Templates](/docs/live-streaming/ingest-and-encoding/encoding-templates)
+
+  **Webhooks**
+  - [Live Webhooks](/docs/live-streaming/webhooks)
+</Accordion>
+
+---
+
+## Why developers choose Tenbyte
+
+- **Predictable pricing** — pay-as-you-go, billed in your local currency. No surprise FX swings.
+- **Real infrastructure** — Tier III data centers, enterprise hardware, anycast edge.
+- **One platform** — compute, storage, CDN, and video tools share one console, one API, one bill.
+- **Real support** — regional team, 24 / 7, real humans.
+- **API-first** — every console action has an API equivalent. Wire it into CI/CD, Terraform, or your favorite scripting language.
+
+> Pick a service, follow a quickstart, automate the rest. If a guide leaves you stuck, [email support](mailto:support@tenbyte.io) — we read every message.
+
+Want to keep exploring? Browse the [Tenbyte website](https://www.tenbyte.io/) or open the [API Reference](/api-reference/overview).

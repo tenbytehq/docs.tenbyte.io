@@ -1,169 +1,197 @@
 ---
 title: 'Shopify'
 sidebarTitle: 'Shopify'
-icon: 'braces'
+description: 'Route Shopify product images through Tenbyte CDN for faster storefronts. Includes theme settings, snippet, and srcset example.'
+icon: 'shopping-bag'
 ---
 
-Deliver faster, lighter images across your Shopify storefront by routing your image requests through Tenbyte’s image optimization service. 
+Shopify hosts your product images on `cdn.shopify.com`. By proxying that origin through Tenbyte CDN, you get on-the-fly resizing, format conversion, and faster regional delivery without changing how you upload products.
 
-This guide explains how to deliver Shopify store images through Tenbyte CDN for faster loading and better performance. You will configure your Tenbyte distribution, copy your Delivery Endpoint, and use it inside your Shopify theme.
+## How the integration works
 
-## Add Shopify as an Origin
-- Go to your Distribution and select Origins from left sidebar.
-- Select Hostname and Enter: 
-    - Origin Name: Origin-Shopify
-    - Domain / IP: `https://cdn.shopify.com`
-- Save the Origin.
-    
-    <Frame caption="Add Shopify as an Origin">
-        <img src="/images/cdn/51.png" alt="Add Shopify as an Origin" />
-    </Frame>
+```mermaid
+flowchart LR
+    THEME[Shopify theme<br/>tenbyte.liquid] -->|rewrite URL| TENBYTE[your-distribution.tenbytecdn.com]
+    TENBYTE -->|cache miss| SHOPIFY[cdn.shopify.com]
+    SHOPIFY -->|original image| TENBYTE
+    TENBYTE -->|optimized variant| BROWSER[Browser]
+```
 
-- Your Tenbyte CDN domain can now fetch and optimize Shopify-hosted images.
+The `tenbyte.liquid` snippet rewrites Shopify CDN URLs to Tenbyte URLs and appends transform params.
 
-    <Frame caption="Domain Distribution URL">
-        <img src="/images/cdn/52.png" alt="Add Shopify as an Origin" />
-    </Frame>
+## Prerequisites
 
---- 
+- A Shopify store with theme edit access.
+- A Tenbyte distribution with [Image Optimizer enabled](/docs/cdn/distributions/image-optimizer).
+- **Backup your theme** before editing — Online Store → Themes → "..." → Download theme file.
 
-## Add Tenbyte Settings to Shopify (`settings_schema.json`)
-- In Shopify Admin go to Online Store → Themes, locate the theme, open the **`“…”`** menu, and select Edit code. This allows users to enter the Delivery Endpoint.
-- Open the Config folder, select **`settings_schema.json`**, scroll to the bottom, and paste the code below as the final section of the file. Save your changes when done.
+## 1. Add Shopify as an origin
+
+In your Tenbyte distribution → **Origins** → **Add Origin**:
+
+| Field | Value |
+|-------|-------|
+| Origin Name | `Origin-Shopify` |
+| Type | Hostname |
+| Domain / IP | `https://cdn.shopify.com` |
+
+<Frame caption="Add Shopify as an Origin">
+    <img src="/images/cdn/51.png" alt="Add Shopify as an Origin" />
+</Frame>
+
+Save. Your Tenbyte CDN domain can now fetch and optimize Shopify-hosted images.
+
+<Frame caption="Domain Distribution URL">
+    <img src="/images/cdn/52.png" alt="Distribution URL" />
+</Frame>
+
+## 2. Add Tenbyte settings to the theme
+
+In Shopify Admin → **Online Store → Themes**, find your theme, click **"..." → Edit code**.
+
+Open `Config/settings_schema.json`, scroll to the bottom, and append this block. Save.
 
 ```json settings_schema.json
 {
-    "name": "Tenbyte",
-    "settings": [
-        {
-            "type": "paragraph",
-            "content": "Check out Tenbyte's [Image Optimization for Shopify](https://docs.tenbyte.io/docs/cdn/image-optimization/integration-guide/shopify) to learn more about this."
-        },
-        {
-            "type": "checkbox",
-            "id": "enableTenbyte",
-            "label": "Enable Tenbyte"
-        },
-        {
-            "type": "text",
-            "id": "tenbyteUrl",
-            "label": "Tenbyte url endpoint",
-            "info":"The origin domain you set within Tenbyte. Example: `https://example.tenbytecdn.com/`."
-        },
-        {
-            "type": "text",
-            "id": "tenbyteShopifyCdnUrl",
-            "label": "Shopify CDN domain",
-            "info":"Do not change this unless you have a proxy in place. Not sure? Leave it as is."
-        }
-    ]
+  "name": "Tenbyte",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Tenbyte Image Optimization. See https://docs.tenbyte.io/docs/cdn/image-optimization/integration-guide/shopify"
+    },
+    {
+      "type": "checkbox",
+      "id": "enableTenbyte",
+      "label": "Enable Tenbyte"
+    },
+    {
+      "type": "text",
+      "id": "tenbyteUrl",
+      "label": "Tenbyte URL endpoint",
+      "info": "Your Tenbyte distribution. Example: https://your-distribution.tenbytecdn.com/"
+    },
+    {
+      "type": "text",
+      "id": "tenbyteShopifyCdnUrl",
+      "label": "Shopify CDN domain",
+      "info": "Leave as //cdn.shopify.com unless you have a proxy in place."
+    }
+  ]
 }
 ```
---- 
 
-## Create tenbyte.liquid file
-- Create a new file named **`tenbyte.liquid`** inside the Snippets directory. Paste the code below into the file and save it.
+## 3. Create the `tenbyte.liquid` snippet
+
+In **Snippets**, create `tenbyte.liquid` and paste:
+
 ```liquid tenbyte.liquid
 {% capture TENBYTE %}
- {% comment %}
- {% endcomment %}
- {% if settings.enableTenbyte %}
- {% for i in (1..1) %}
- {% comment %}
- <!-- Check to ensure the src exists and that the Tenbyte url theme settings are not blank. If blank, stop! -->
- {% endcomment %}
- {% unless src or settings.tenbyteUrl != blank %}
- {{ src }}
- {% break %}
- {% endunless %}
+  {% if settings.enableTenbyte %}
+    {% for i in (1..1) %}
+      {% unless src or settings.tenbyteUrl != blank %}
+        {{ src }}{% break %}
+      {% endunless %}
 
- {% comment %}
- <!-- Check to ensure the src has the Shopify CDN url in it. If it doesn't this does not need to run any further -->
- {% endcomment %}
- {% assign cdnUrl = settings.tenbyteShopifyCdnUrl | strip %}
- {% unless src contains cdnUrl %}
- {{ src }}
- {% break %}
- {% endunless %}
+      {% assign cdnUrl = settings.tenbyteShopifyCdnUrl | strip %}
+      {% unless src contains cdnUrl %}
+        {{ src }}{% break %}
+      {% endunless %}
 
- {% assign tenbyteUrl = settings.tenbyteUrl | strip %}
+      {% assign tenbyteUrl = settings.tenbyteUrl | strip %}
 
- {% comment %}
- <!-- Create a list of all the Tenbyte filters we want to use -->
- {% endcomment %}
- {% assign filters = 'bri,con,cs,exp,gam,high,hue,invert,sat,shad,sharp,usm,usmrad,vib,auto,bg,blend,bm,ba,balph,bp,bw,bh,bf,bc,bs,bx,by,border,pad,faceindex,facepad,faces,ch,chromasub,colorquant,dl,dpi,fm,lossless,q,mask,nr,nrs,colors,palette,prefix,dpr,flip,or,rot,crop,fit,h,rect,w,blur,htn,mono,px,sepia,txt,txtalign,txtclip,txtclr,txtfit,txtfont,txtline,txtlineclr,txtpad,txtshad,txtsize,txtwidth,trim,trimcolor,trimmd,trimpad,trimsd,trimtol,mark,markalign,markalpha,markbase,markfit,markh,markpad,markscale,markw,markx,marky' | split:',' %}
+      {% assign filters = 'w,h,q,fm,fit,dpr,format,quality,bri,con,sat,sharp,blur,auto' | split:',' %}
+      {% assign imgWithQuerystring = "?" %}
+      {% if src contains '?' %}{% assign imgWithQuerystring = '' %}{% endif %}
 
- {% comment %}
- <!-- Build up the list of filters to add to the url -->
- {% endcomment %}
- {% assign imgWithQuerystring = "?" %}
+      {% for _filter in filters %}
+        {% if [_filter] %}
+          {% assign imgWithQuerystring = imgWithQuerystring | append:_filter | append:'=' | append:[_filter] | append:'&' %}
+        {% endif %}
+      {% endfor %}
 
- {% if src contains '?' %}
- {% assign imgWithQuerystring = '' %}
- {% endif %}
+      {% assign modifySrc = src | split:'?' | first | append:"?" %}
+      {% assign newSrc = modifySrc | strip | replace:cdnUrl,tenbyteUrl | append:imgWithQuerystring %}
+    {% endfor %}
 
- {% for _filter in filters %}
- {% if [_filter] %}
- {% assign imgWithQuerystring = imgWithQuerystring | append:_filter | append:'=' | append:[_filter] | append:'&' %}
- {% endif %}
- {% endfor %}
-
- {% assign modifySrc = src | split:'?' | first | append: "?" %}
- {% assign newSrc = modifySrc | strip | replace:cdnUrl,tenbyteUrl | append:imgWithQuerystring %}
- {% endfor %}
-
- {{ newSrc | default:src }}
- {% else %}
- {{ src }}
- {% endif %}
+    {{ newSrc | default:src }}
+  {% else %}
+    {{ src }}
+  {% endif %}
 {% endcapture %}{{ TENBYTE | strip | replace:'  ' | strip_newlines }}
 ```
---- 
 
-## Enable Tenbyte
-- Go to Online Store → Themes → Customize. In the left panel, open the Tenbyte section under General settings and turn it on. Then fill in the two fields:
-    - **Default URL endpoint**: https://example.tenbytecdn.com
-    - **Shopify CDN domain**: //cdn2.shopify.com or //cdn.shopify.com
+## 4. Enable Tenbyte in theme settings
 
---- 
+**Online Store → Themes → Customize**. In the left panel, open the **Tenbyte** section under General settings:
 
-## Edit your theme files
-- Next, you’ll update the theme files that handle image output. These are the templates where Shopify renders your product, collection, and banner images.
+| Field | Value |
+|-------|-------|
+| Enable Tenbyte | ✓ |
+| Tenbyte URL endpoint | `https://your-distribution.tenbytecdn.com/` |
+| Shopify CDN domain | `//cdn.shopify.com` |
 
-<Warning>
-    Before modifying anything, download a copy of your theme so you can restore it if something goes wrong.
-</Warning>
+## 5. Update theme image renders
 
-- The exact locations may differ by theme, but the approach is the same. Locate every spot where an image is rendered and replace that output with the Tenbyte Liquid tag you created earlier. Here’s an example:
+Replace direct image renders with the snippet. The before/after pattern:
 
-Before:
-```bash
+**Before:**
+
+```liquid
 {{ product.featured_image }}
 ```
-After:
-```bash
-{% assign feat_img_url = product.featured_image  | image_url %}
-{% render 'tenbyte', src:feat_img_url w:600 %}
+
+**After:**
+
+```liquid
+{% assign feat_img_url = product.featured_image | image_url %}
+{% render 'tenbyte', src: feat_img_url, w: 600 %}
 ```
-- Here’s another example of generating a responsive image using Tenbyte’s quickly **`srcset`** and **`sizes`** attributes:
-```bash
-{% assign feat_img_url = product.featured_image  | image_url %}
+
+### Responsive `srcset` example
+
+```liquid
+{% assign feat_img_url = product.featured_image | image_url %}
 
 <img
- src="{% render 'tenbyte', src:feat_img_url w:960 %}"
- srcset="
- {% render 'tenbyte', src:feat_img_url w:320  %} 320w,
- {% render 'tenbyte', src:feat_img_url w:480  %} 480w,
- {% render 'tenbyte', src:feat_img_url w:540  %} 540w,
- {% render 'tenbyte', src:feat_img_url w:640  %} 640w,
- {% render 'tenbyte', src:feat_img_url w:720  %} 720w,
- {% render 'tenbyte', src:feat_img_url w:800  %} 800w,
- {% render 'tenbyte', src:feat_img_url w:960  %} 960w,
- {% render 'tenbyte', src:feat_img_url w:1280 %} 1280w,
- {% render 'tenbyte', src:feat_img_url w:1600 %} 1600w
-  "
- sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 100 | times: media_width | round }}px, (min-width: 990px) calc({{ media_width | times: 100 }}vw - 10rem), (min-width: 750px) calc((100vw - 11.5rem) / 2), calc(100vw - 4rem)"
- alt="{{ media.preview_image.alt | escape }}"
- {% unless lazy_load == false %}loading="lazy"{% endunless %}
-/>
+  src="{% render 'tenbyte', src: feat_img_url, w: 960 %}"
+  srcset="
+    {% render 'tenbyte', src: feat_img_url, w: 320  %} 320w,
+    {% render 'tenbyte', src: feat_img_url, w: 480  %} 480w,
+    {% render 'tenbyte', src: feat_img_url, w: 640  %} 640w,
+    {% render 'tenbyte', src: feat_img_url, w: 960  %} 960w,
+    {% render 'tenbyte', src: feat_img_url, w: 1280 %} 1280w,
+    {% render 'tenbyte', src: feat_img_url, w: 1600 %} 1600w"
+  sizes="(min-width: 990px) 800px, calc(100vw - 4rem)"
+  alt="{{ media.preview_image.alt | escape }}"
+  loading="lazy" />
 ```
+
+## Verify
+
+1. Open a product page.
+2. View source / inspect element.
+3. Confirm image URLs go to `your-distribution.tenbytecdn.com` instead of `cdn.shopify.com`.
+4. In DevTools Network, check `content-type: image/webp` on supported browsers.
+
+```bash
+# Or test directly
+curl -sSI "https://your-distribution.tenbytecdn.com/s/files/1/.../photo.jpg?w=480&fm=auto" \
+  | grep -iE 'content-type|x-cache'
+```
+
+## Operational tips
+
+- **Ship behind the checkbox.** The `enableTenbyte` toggle lets you roll back instantly.
+- **Test in a draft theme.** Edit a copy, preview, then publish.
+- **Watch [cache hit ratio](/docs/cdn/analytics/cache-hit-ratio).** Shopify pages reuse images aggressively; CHR should climb past 95%.
+- **Cap widths.** Match Shopify's preset image sizes (320, 480, 640, 960, 1280, 1600) so you don't fragment the cache.
+- **Lazy-load below the fold.** `loading="lazy"` is supported in Liquid `<img>` tags.
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---------|-----|
+| Images still hit `cdn.shopify.com` | `enableTenbyte` is off or `tenbyteUrl` is blank in theme settings. |
+| `404` from Tenbyte | Origin not added or wrong path; the path on Tenbyte must match Shopify's. |
+| Layout shifts | Add `width` and `height` to `<img>` so the browser reserves space. |
+| Broken theme | Restore from the backup you took in step 0. |

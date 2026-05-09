@@ -1,31 +1,91 @@
 ---
 title: 'Nuxt'
 sidebarTitle: 'Nuxt'
-icon: 'braces'
+description: 'Use Tenbyte Image Optimization in Nuxt via the @nuxt/image module and the tenbyte provider.'
+icon: 'mountain'
 ---
-To use Tenbyte Image Optimization in Nuxt, you only need to define the base URL for your Tenbyte image service. 
 
-Once configured, Nuxt will route your image requests through Tenbyte and return optimized versions automatically.
+Nuxt's `@nuxt/image` module supports custom providers. Configure Tenbyte once and use `<NuxtImg>` (or `<NuxtPicture>`) anywhere in your app — Nuxt handles `srcset`, lazy loading, and sizing.
 
-```typescript nuxt.config.ts
+## Prerequisites
+
+- Nuxt 3 with `@nuxt/image` installed:
+  ```bash
+  npm install @nuxt/image
+  ```
+- A Tenbyte distribution with [Image Optimizer enabled](/docs/cdn/distributions/image-optimizer).
+- Your Tenbyte CDN hostname.
+
+## Configure the provider
+
+```ts nuxt.config.ts
 export default defineNuxtConfig({
+  modules: ["@nuxt/image"],
   image: {
+    provider: "tenbyte",
     tenbyte: {
-      baseURL: 'https://demo.tenbyte.io'
-    }
-  }
-})
+      baseURL: "https://your-distribution.tenbytecdn.com",
+    },
+  },
+});
 ```
 
-To use Tenbyte as your image provider, you can start with the following configuration snippet:
+## Use `<NuxtImg>`
+
 ```vue
-<NuxtImg
-  provider="tenbyte"
-  src="/sea.jpeg"
-  width="300"
-  height="500"
-  fit="cover"
-  :modifiers="{ format: 'auto', compress: 'true' }"
-/>
+<template>
+  <NuxtImg
+    src="/sea.jpeg"
+    width="800"
+    height="500"
+    sizes="sm:100vw md:50vw lg:800px"
+    fit="cover"
+    :modifiers="{ format: 'auto', quality: 80 }"
+    loading="lazy"
+    alt="Sea view" />
+</template>
 ```
-The component will output a 300×500 optimized image, applying compression and using next gen formats for browsers that support them.
+
+Nuxt resolves `src` against `baseURL` and emits a `srcset` with multiple widths. `modifiers` map to Tenbyte transform query params.
+
+## Use `<NuxtPicture>` for advanced fallbacks
+
+```vue
+<template>
+  <NuxtPicture
+    src="/hero.jpg"
+    width="1600"
+    sizes="100vw"
+    :modifiers="{ format: 'auto', quality: 80 }"
+    alt="Hero" />
+</template>
+```
+
+`<NuxtPicture>` emits a `<picture>` with multiple `<source>` elements — one per format — for browsers that need explicit fallbacks.
+
+## Verify
+
+```bash
+# Render the page and inspect generated URLs
+curl -sS http://localhost:3000 | grep -oE 'tenbytecdn\.com[^"]+' | head -3
+```
+
+Expected URLs include your transforms:
+
+```text
+your-distribution.tenbytecdn.com/sea.jpeg?w=320&q=80&format=auto
+your-distribution.tenbytecdn.com/sea.jpeg?w=640&q=80&format=auto
+your-distribution.tenbytecdn.com/sea.jpeg?w=800&q=80&format=auto
+```
+
+## Tips
+
+- **Use `sizes`** — without it, Nuxt picks the largest width for every breakpoint.
+- **Pin `quality`** in `modifiers` — keeps bundle output deterministic.
+- **`format: 'auto'`** — lets the edge negotiate WebP / AVIF based on the browser's `Accept` header.
+- **Lazy-load by default** — Nuxt's default. Override with `loading="eager"` only above the fold.
+- **Cache long.** Set a long TTL on `/path/to/images/*` via [cache rules](/docs/cdn/distributions/cache-rules); each variant is independent.
+
+## Reference
+
+[@nuxt/image documentation](https://image.nuxt.com/)

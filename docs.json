@@ -9,10 +9,6 @@
     "light": "#029C69",
     "dark": "#029C69"
   },
-  "banner": {
-    "content": "🚀 Version 2.0 is now live! See our [changelog](/changelog) for details",
-    "dismissible": true
-  },
   "appearance": {
     "default": "dark"
   },
@@ -109,7 +105,7 @@
               {
                 "group": "Manage Videos",
                 "expanded": false,
-                "icon": "video",
+                "icon": "clapperboard",
                 "pages": [
                   "docs/vidinfra/manage-videos/upload-videos",
                   "docs/vidinfra/manage-videos/video-settings"
@@ -180,31 +176,26 @@
                 "group": "Manage Live Streams",
                 "expanded": false,
                 "icon": "video",
-                "pages": [
-                  "docs/live-streaming/manage-streams"
-                ]
+                "pages": ["docs/live-streaming/manage-streams"]
               },
               {
                 "group": "Ingest & Encoding",
                 "expanded": false,
-                "icon": "palette",
+                "icon": "radio-tower",
                 "pages": [
                   "docs/live-streaming/ingest-and-encoding/configuration",
                   "docs/live-streaming/ingest-and-encoding/ingest-protocols",
                   "docs/live-streaming/ingest-and-encoding/output-protocols",
                   "docs/live-streaming/ingest-and-encoding/encoding-templates"
-                  ]
+                ]
               },
-              
+
               {
                 "group": "Webhooks",
                 "expanded": false,
                 "icon": "webhook",
-                "pages": [
-                  "docs/live-streaming/webhooks"
-                ]
+                "pages": ["docs/live-streaming/webhooks"]
               }
-              
             ]
           },
           {
@@ -225,14 +216,25 @@
               {
                 "group": "Distributions",
                 "expanded": false,
-                "icon": "shapes",
+                "icon": "network",
                 "pages": [
                   "docs/cdn/distributions/create-distribution",
                   "docs/cdn/distributions/distribution-overview",
                   "docs/cdn/distributions/origins",
                   "docs/cdn/distributions/ssl",
                   "docs/cdn/distributions/headers",
-                  "docs/cdn/distributions/access-rules",
+                  {
+                    "group": "Access Rules",
+                    "expanded": false,
+                    "icon": "shield-check",
+                    "pages": [
+                      "docs/cdn/distributions/access-rules/overview",
+                      "docs/cdn/distributions/access-rules/country-access-policy",
+                      "docs/cdn/distributions/access-rules/ip-access-policy",
+                      "docs/cdn/distributions/access-rules/referrer-access-policy",
+                      "docs/cdn/distributions/access-rules/token-authentication"
+                    ]
+                  },
                   "docs/cdn/distributions/cache-rules"
                 ]
               },
@@ -244,7 +246,7 @@
                   {
                     "group": "Image Integration Guide",
                     "expanded": false,
-                    "icon": "image-up",
+                    "icon": "puzzle",
                     "pages": [
                       "docs/cdn/image-optimization/integration-guide/index",
                       "docs/cdn/image-optimization/integration-guide/nextjs",
@@ -260,8 +262,9 @@
               {
                 "group": "Analytics",
                 "expanded": false,
-                "icon": "chart-area",
+                "icon": "chart-line",
                 "pages": [
+                  "docs/cdn/analytics/overview",
                   "docs/cdn/analytics/traffic-reports",
                   "docs/cdn/analytics/request-served",
                   "docs/cdn/analytics/cache-hit-ratio",
@@ -271,7 +274,7 @@
               {
                 "group": "Purge",
                 "expanded": false,
-                "icon": "trash",
+                "icon": "eraser",
                 "pages": [
                   "docs/cdn/purge/purge-by-pattern",
                   "docs/cdn/purge/purge-all"
@@ -280,8 +283,12 @@
               {
                 "group": "Certificate",
                 "expanded": false,
-                "icon": "shield",
-                "pages": ["docs/cdn/certificates/custom-certificates"]
+                "icon": "lock-keyhole",
+                "pages": [
+                  "docs/cdn/certificates/ssl-overview",
+                  "docs/cdn/certificates/lets-encrypt",
+                  "docs/cdn/certificates/custom-certificates"
+                ]
               }
             ]
           },
@@ -317,33 +324,36 @@
                 "icon": "database-backup",
                 "pages": [
                   "docs/cloud/storage/block-storage",
-                  
-                  {"group": "T2 Object Storage",
+
+                  {
+                    "group": "T2 Object Storage",
                     "expanded": false,
                     "icon": "package",
                     "pages": [
-                    "docs/cloud/storage/object-storage",
-                     {"group": "Integration Guide",
-                    "expanded": false,
-                    "icon": "puzzle",
-                    "pages": [
-                    "docs/cloud/storage/laravel-with-tenbyte",
-                    "docs/cloud/storage/sdk-for-go",
-                    "docs/cloud/storage/sdk-for-python",
-                    "docs/cloud/storage/sdk-for-javascript",
-                    "docs/cloud/storage/sdk-for-java",
-                    "docs/cloud/storage/sdk-for-php",
-                    "docs/cloud/storage/sdk-for-ruby",
-                    "docs/cloud/storage/sdk-for-dotnet"
-                    ]
-                  }
+                      "docs/cloud/storage/object-storage",
+                      {
+                        "group": "Integration Guide",
+                        "expanded": false,
+                        "icon": "puzzle",
+                        "pages": [
+                          "docs/cloud/storage/laravel-with-tenbyte",
+                          "docs/cloud/storage/sdk-for-go",
+                          "docs/cloud/storage/sdk-for-python",
+                          "docs/cloud/storage/sdk-for-javascript",
+                          "docs/cloud/storage/sdk-for-java",
+                          "docs/cloud/storage/sdk-for-php",
+                          "docs/cloud/storage/sdk-for-ruby",
+                          "docs/cloud/storage/sdk-for-dotnet"
+                        ]
+                      }
                     ]
                   },
-                    {"group": "S3 Compitable API",
+                  {
+                    "group": "S3 Compitable API",
                     "expanded": false,
                     "icon": "plug",
                     "pages": [
-                  "docs/cloud/storage/s3-compitable-api/intro-s3-compitable-api"
+                      "docs/cloud/storage/s3-compitable-api/intro-s3-compitable-api"
                     ]
                   }
                 ]
@@ -381,7 +391,6 @@
               }
             ]
           }
-          
         ]
       },
       {
@@ -444,14 +453,22 @@
   "navbar": {
     "links": [
       {
+        "label": "Status",
+        "href": "https://status.tenbyte.io"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/vidinfra"
+      },
+      {
         "label": "Support",
         "href": "mailto:support@tenbyte.io"
       }
     ],
     "primary": {
       "type": "button",
-      "label": "Dashboard",
-      "href": "https://console.tenbyte.io"
+      "label": "Sign up free",
+      "href": "https://www.tenbyte.io/get-started"
     }
   },
   "contextual": {

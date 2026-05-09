@@ -1,0 +1,34 @@
+---
+title: 'Country Access Policy'
+sidebarTitle: 'Country Access'
+description: 'Allow or deny CDN requests based on the requester country.'
+icon: 'globe-lock'
+---
+
+Restrict who can fetch content based on the requester's country. Useful for licensing, regional rollouts, and compliance.
+
+## Allow by default
+
+All countries are allowed unless you list exceptions to deny.
+
+<Frame caption="Country Access Policy - Allow by Default">
+    <img src="/images/cdn/25.png" alt="Country Access Policy" />
+</Frame>
+
+## Deny by default
+
+All countries are blocked unless you list specific countries to allow.
+
+<Frame caption="Country Access Policy - Deny by Default">
+    <img src="/images/cdn/49.png" alt="Country Access Policy" />
+</Frame>
+
+## When to use this
+
+- License a video catalog only to specific markets.
+- Block traffic from regions outside your business footprint.
+- Stage a regional launch before going global.
+
+<Note>
+    Country detection uses the requester IP. VPN traffic resolves to the VPN exit country, not the user's true location.
+</Note>

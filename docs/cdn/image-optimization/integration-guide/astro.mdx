@@ -1,103 +1,124 @@
 ---
-title: 'Astro.js'
-sidebarTitle: 'Astro.js'
-icon: 'braces'
+title: 'Astro'
+sidebarTitle: 'Astro'
+description: 'Use Tenbyte Image Optimization in Astro with a small wrapper component and the Tenbyte JS SDK.'
+icon: 'telescope'
 ---
 
-Use Tenbyte Image Optimization to deliver lighter, faster images in your Astro project. 
+Use Tenbyte Image Optimization in Astro to deliver lighter images with zero build-time work. Drop in a small component and the Tenbyte JS SDK; the SDK rewrites `data-src` to optimized Tenbyte URLs at runtime.
 
-This guide walks you through the setup process, how to use the integration in your components, and the options available to tailor image delivery to your needs.
+## Prerequisites
 
-## Installation & Setup
+- Astro 3+.
+- A Tenbyte distribution with [Image Optimizer enabled](/docs/cdn/distributions/image-optimizer).
+- The Tenbyte CDN hostname for your account.
 
-### Create a Tenbyte Astro Component
-- Create **`src/components/TenbyteImage.astro`**
-```javascript Javascript
+## 1. Create the wrapper component
+
+```astro src/components/TenbyteImage.astro
 ---
-// TenbyteImage.astro
 const { src, alt = "", style = "", ...rest } = Astro.props;
 ---
 <img
   data-src={src}
   alt={alt}
   style={style}
+  loading="lazy"
   {...rest}
 />
 ```
-### Load Tenbyte JS and Configure in Global Layout
-- Add to your main layout (e.g., **`src/layouts/BaseLayout.astro`**):
-```html HTML
+
+The SDK looks for `data-src` and rewrites it on load.
+
+## 2. Load the Tenbyte SDK in your layout
+
+```astro src/layouts/BaseLayout.astro
 <head>
-  <!-- Tenbyte Configuration -->
-  <script>
+  <script is:inline define:vars={{
+    origin: "images.yoursite.com",
+    tenbyte: "your-distribution.tenbytecdn.com"
+  }}>
     window.TENBYTE_CONFIG = {
-      hosts: [
-        {
-          current: "example.com",      // Your site’s domain
-          tenbyte: "mysubdomain.tenbytecdn.com" // Your Tenbyte source
-        }
-      ],
+      hosts: [{ current: origin, tenbyte }],
       lazy_load: true
     };
   </script>
   <script
     src="https://cdn.jsdelivr.net/npm/tenbyte.js@2.1/dist/tenbyte.min.js"
     id="tenbyte-sdk-script"
-    sync
-  ></script>
+    async></script>
 </head>
 ```
 
 <Warning>
-  Update "**`example.com`**" and "**`your-tenbyte-domain`**" to match the domain where your images are hosted and the Tenbyte domain provided to your account.
+    Replace `images.yoursite.com` with the domain where your master images live, and `your-distribution.tenbytecdn.com` with your Tenbyte hostname.
 </Warning>
 
---- 
+## 3. Use it in pages
 
-## Usage
-Import and use the Tenbyte image component in your Astro pages:
-```javascript Javascript
+```astro src/pages/index.astro
 ---
-import TenbyteImage from '../components/TenbyteImage.astro';
+import BaseLayout from "../layouts/BaseLayout.astro";
+import TenbyteImage from "../components/TenbyteImage.astro";
 ---
-<TenbyteImage
-  src="https://yourdomain.com/images/photo.jpg"
-  alt="Alt text for SEO"
-  style="width: 400px;"
-/>
+<BaseLayout>
+  <TenbyteImage
+    src="https://images.yoursite.com/photo.jpg"
+    alt="Photo"
+    style="width: 400px;" />
+</BaseLayout>
 ```
-Use the **`data-src`** attribute when loading images so Tenbyte can optimize them automatically. It supports both lazy loading and responsive images.
-## Image Transformations
-- Pass additional Tenbyte parameters inside src URL:
-```javascript Javascript
+
+## Pre-applied transforms
+
+You can put query params directly in `src` — they're preserved through the rewrite:
+
+```astro
 <TenbyteImage
-  src="https://yourdomain.com/images/photo.jpg?w=400&format=webp"
+  src="https://images.yoursite.com/photo.jpg?w=400&format=webp"
   alt="Optimized"
-  style="width: 400px;"
-/>
+  style="width: 400px;" />
 ```
---- 
 
-## Advanced
-- You can pass any standard HTML **`<img>`** attribute as a prop.
-- SSR is fully supported, and the output renders as regular **`<img>`** tags.
-- For static Astro builds, images are still delivered in an optimized form through Tenbyte.
+Or compose params per breakpoint with a small helper:
 
---- 
-
-## Example
-
-```javascript Javascript
-<TenbyteImage
-  src="https://demo.tenbytecdn.com/logo.png?w=300"
-  alt="Company logo"
-  style="width:300px;"
-/>
+```astro src/lib/img.ts
+export function tenbyteUrl(src: string, params: Record<string, string | number> = {}) {
+  const u = new URL(src);
+  for (const [k, v] of Object.entries(params)) u.searchParams.set(k, String(v));
+  if (!u.searchParams.has("format")) u.searchParams.set("format", "auto");
+  if (!u.searchParams.has("q")) u.searchParams.set("q", "80");
+  return u.toString();
+}
 ```
---- 
+
+```astro
+---
+import { tenbyteUrl } from "../lib/img";
+---
+<TenbyteImage src={tenbyteUrl("https://images.yoursite.com/photo.jpg", { w: 800 })} alt="" />
+```
+
+## Verify
+
+```bash
+curl -sS http://localhost:4321 | grep -oE '(data-src|src)="[^"]*tenbytecdn\.com[^"]+"' | head -3
+```
+
+After the SDK loads in the browser, `data-src` becomes `src`. Inspect with DevTools → Network to see the actual request URL.
+
+## Tips
+
+- **Always `loading="lazy"`** below the fold.
+- **Cap widths** — only request widths your design uses.
+- **`format=auto`** — let the edge pick WebP / AVIF.
+- **SSR works** — output is plain `<img>`. The SDK runs only on the client.
+- **Static builds work** — Tenbyte still handles transforms at request time.
 
 ## Troubleshooting
 
-- Make sure your Tenbyte image domain or source settings are configured correctly.
-- Use **`data-src`** instead of **`src`** so images can be processed by Tenbyte.
-- Ensure the Tenbyte image script loads before your images appear on the page.
+| Symptom | Fix |
+|---------|-----|
+| Images don't load | SDK script blocked / not loaded. Check Network tab; confirm `tenbyte.min.js` is fetched. |
+| Original src is requested | The host in `src` doesn't match `TENBYTE_CONFIG.hosts[0].current`. |
+| Wrong dimensions on Retina | Pass `dpr=2` or rely on `srcset` widths. |

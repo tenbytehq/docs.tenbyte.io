@@ -1,25 +1,70 @@
 ---
-title: 'Tenbyte CDN Knowledge Base'
+title: 'Tenbyte CDN'
 sidebarTitle: 'What is Tenbyte CDN?'
-icon: 'globe'
+description: 'Global content delivery network with edge caching, image optimization, signed URLs, and a REST API for automation.'
+icon: 'house'
 ---
 
+**Tenbyte CDN** is a global content delivery network that puts your static assets, video, and API responses on edge nodes close to your users. Lower latency, fewer origin hits, and a REST API and webhooks for automation.
 
-**Tenbyte CDN** is a global content delivery network that speeds up websites, applications, and video delivery by serving content from edge locations closer to users. 
+## How it works
 
-It reduces latency, improves load times, and handles high traffic efficiently, with multi CDN routing, image optimization, low latency streaming, and built in analytics for media heavy platforms.
+```mermaid
+flowchart LR
+    U[User] -->|GET asset| E[Tenbyte edge<br/>nearest PoP]
+    E -->|cache miss| O[Your origin]
+    O -->|response| E
+    E -->|cache hit| U
+    E -->|metrics + logs| A[Analytics & API]
+```
+
+Requests hit the nearest edge PoP. On a cache miss the edge fetches from your origin, caches the response per your rules, and serves the next request locally.
+
+## Core concepts
+
+| Concept | What it is | Where to configure |
+|---------|------------|--------------------|
+| **Distribution** | A configured CDN endpoint mapped to one or more origins. | [Create distribution](/docs/cdn/distributions/create-distribution) |
+| **Origin** | The upstream your distribution pulls from (HTTP, S3, custom). | [Origins](/docs/cdn/distributions/origins) |
+| **Cache rule** | Per-path TTL, query-string handling, compression. | [Cache rules](/docs/cdn/distributions/cache-rules) |
+| **Access rule** | Country / IP / referrer / token gate per path. | [Access rules](/docs/cdn/distributions/access-rules/overview) |
+| **Header rule** | Add / remove request and response headers. | [Headers](/docs/cdn/distributions/headers) |
+| **Purge** | Invalidate cached content by path or pattern. | [Purge](/docs/cdn/purge/purge-by-pattern) |
 
 ## Why Tenbyte CDN
 
-- **Smart Routing:** It automatically sends users to the nearest edge node which is also healthy.
-- **World Wide Coverage**: Numerous PoPs within regions for quick delivery.
-- **Custom Rules:** Set cache behavior, headers and access rules at the edge.
-- **Secure by Default:** TLS, WAF integration, token based access and signed URLs.
-- **Real-Time Insights:** Track bandwidth, requests, cache hit ratio and more.
-- **Seamless Integration:** Get in touch with Vidinfra, Image Optimization and Tenbyte Cloud.
-- **High Traffic Capacity:** Designed to manage high volumes of traffic and demand.
-- **HTTP/2 and HTTP/3 Support:** Newer protocols are designed for faster connection setup and delivery.
-- **Instant Cache Purge:** Remove outdated files from the edge in real time.
-- **Flexible Billing:** Pay as you go pricing with predictable usage based costs.
-- **Multi-CDN Function**: Automatically switches networks based on performance and uptime.
+- **Smart routing** — anycast plus health checks pick the nearest healthy edge.
+- **Global PoPs** — many points of presence per region.
+- **Edge customization** — cache, headers, and access policies as code via the API.
+- **Secure by default** — TLS, WAF integration, and [token-authenticated signed URLs](/docs/cdn/distributions/access-rules/token-authentication).
+- **Real-time analytics** — bandwidth, requests, cache-hit ratio, response classes.
+- **HTTP/2 and HTTP/3** — multiplexed, lower-handshake delivery.
+- **Instant purge** — invalidate cached content via console or API.
+- **Pay-as-you-go** — usage-based billing, no minimums.
 
+## What developers get
+
+- **REST API** — manage distributions, rules, and purges. See the [CDN API reference](/api-reference/cdn).
+- **OpenAPI spec** — generate clients for your stack.
+- **Webhooks** — react to purge, certificate, and traffic events.
+- **Signed URLs** — protect content with time-limited tokens. [Token authentication](/docs/cdn/distributions/access-rules/token-authentication).
+- **Headers control** — add `Cache-Control`, `CORS`, and security headers at the edge.
+
+## Getting started
+
+<Steps>
+  <Step title="Create a distribution">
+    Point a distribution at your origin. [Create distribution →](/docs/cdn/distributions/create-distribution)
+  </Step>
+  <Step title="Verify the edge">
+    `curl -I` your distribution hostname and confirm `X-Cache: HIT` after a warmup request.
+  </Step>
+  <Step title="Add cache and access rules">
+    Tune TTLs, lock down content with access rules, or sign URLs.
+  </Step>
+  <Step title="Wire up the API">
+    Automate purges and rule updates from CI/CD.
+  </Step>
+</Steps>
+
+Jump to the [Quick Start Guide](/docs/cdn/quickstart) for the full walk-through.

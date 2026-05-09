@@ -1,42 +1,105 @@
 ---
 title: 'Next.js'
 sidebarTitle: 'Next.js'
-icon: 'braces'
+description: 'Use Tenbyte Image Optimization with the Next.js Image component via a custom loader. Works with App Router and Pages Router.'
+icon: 'square-code'
 ---
 
-Next.js (v10 and above) includes built-in image optimization, and you can connect it to Tenbyte Image Optimization with only a few lines of configuration. 
+Next.js (v10+) ships a built-in `<Image>` component. Plug Tenbyte into it with a custom loader — a few lines of config, no extra dependencies.
 
-By using a custom image loader, your Next.js app can fetch correctly sized images directly from the Tenbyte service. Here’s the simplest way to set up a custom loader for Tenbyte.
+## Prerequisites
+
+- Next.js 10+ (App Router or Pages Router).
+- A Tenbyte distribution with [Image Optimizer enabled](/docs/cdn/distributions/image-optimizer).
+- The Tenbyte CDN hostname for your account: `your-distribution.tenbytecdn.com`.
+
+## Setup
 
 <CodeGroup>
 
 ```javascript utils/imageloader.js
 export default function tenbyteLoader({ src, width, quality }) {
-    if(src.includes("<CURRENT_IMAGE_DOMAIN>")){
-        let parsedUrl = new URL(src);
-        parsedUrl.hostname = "<your_tenbyte_subdomain>.tenbytecdn.com";
-        parsedUrl.searchParams.set("w", width);
-        parsedUrl.searchParams.set("q", quality || 80);
-        return parsedUrl.toString();
-    } else {
-        return `${src}?w=${width}&q=${quality || 80}`;
-    }
+  // Rewrite known origin domains to Tenbyte CDN; pass everything else through unchanged.
+  if (src.includes(process.env.NEXT_PUBLIC_IMAGE_ORIGIN)) {
+    const url = new URL(src);
+    url.hostname = process.env.NEXT_PUBLIC_TENBYTE_HOST;
+    url.searchParams.set("w", width);
+    url.searchParams.set("q", quality || 80);
+    url.searchParams.set("format", "auto");
+    return url.toString();
+  }
+  return `${src}?w=${width}&q=${quality || 80}&format=auto`;
 }
 ```
 
 ```javascript next.config.js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: 'build',
   images: {
-    loader: 'custom',
-    loaderFile: './utils/imageloader.js',
+    loader: "custom",
+    loaderFile: "./utils/imageloader.js",
   },
-  //... other config
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
 ```
+
+```bash .env.local
+NEXT_PUBLIC_IMAGE_ORIGIN=images.yoursite.com
+NEXT_PUBLIC_TENBYTE_HOST=your-distribution.tenbytecdn.com
+```
+
 </CodeGroup>
 
-To learn more about image optimization in Next.js, you can check the official Next.js [Image Optimization](https://nextjs.org/docs/app/api-reference/components/image#loader) documentation.
+## Use the Image component
+
+```jsx
+import Image from "next/image";
+
+export default function Hero() {
+  return (
+    <Image
+      src="https://images.yoursite.com/hero.jpg"
+      alt="Hero"
+      width={1200}
+      height={600}
+      sizes="(max-width: 768px) 100vw, 1200px"
+      priority
+    />
+  );
+}
+```
+
+Next.js will call `tenbyteLoader` for each `srcset` width, generating URLs like:
+
+```text
+https://your-distribution.tenbytecdn.com/hero.jpg?w=1200&q=80&format=auto
+https://your-distribution.tenbytecdn.com/hero.jpg?w=640&q=80&format=auto
+```
+
+## Verify
+
+```bash
+# In the rendered HTML, inspect the srcset
+curl -sS http://localhost:3000 | grep -oE 'tenbytecdn\.com[^"]+' | head -3
+```
+
+Should look like:
+
+```text
+your-distribution.tenbytecdn.com/hero.jpg?w=640&q=80&format=auto
+your-distribution.tenbytecdn.com/hero.jpg?w=1080&q=80&format=auto
+your-distribution.tenbytecdn.com/hero.jpg?w=1920&q=80&format=auto
+```
+
+## Tips
+
+- **Set `sizes`** — without it, Next.js requests the largest variant for every screen.
+- **Use `priority`** sparingly — only for above-the-fold images. It bypasses lazy-loading.
+- **Whitelist domains** — `images.yoursite.com` should be in `images.remotePatterns` if you're on App Router with stricter checks.
+- **Avoid `unoptimized`** — that disables the loader and ships the master file. The whole point of Tenbyte is to skip that.
+- **Cap quality at 80** — visual difference vs 90 is negligible, bytes drop a lot.
+
+## Reference
+
+[Next.js Image documentation](https://nextjs.org/docs/app/api-reference/components/image#loader)

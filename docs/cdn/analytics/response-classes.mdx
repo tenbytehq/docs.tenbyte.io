@@ -1,24 +1,91 @@
 ---
 title: 'Response Classes'
 sidebarTitle: 'Response Classes'
-icon: 'badge-check'
+description: 'Track non-2xx HTTP responses (4xx and 5xx) on your distribution. Includes diagnosis flow and per-class playbooks.'
+icon: 'triangle-alert'
 ---
 
-The Response Classes (Non 2xx) section tracks the number of HTTP responses that fall outside the successful 2xx range, including errors like 4xx (client-side) and 5xx (server-side) errors.
+Response Classes breaks down HTTP status codes the CDN returned to clients. The non-2xx panel surfaces problems — bad URLs, blocked traffic, origin failures — before users complain.
 
-    <Frame caption="Response Classes">
-        <img src="/images/cdn/44.png" alt="Response Classes" />
-    </Frame>
+<Frame caption="Response Classes">
+    <img src="/images/cdn/44.png" alt="Response Classes" />
+</Frame>
 
-## What it tells you:
+## Status code map
 
-- The number of non-2xx responses, such as 4xx (client-side errors) and 5xx (server-side errors).
-- How many failed requests are occurring on your CDN, indicating potential issues with content delivery.
-- The distribution between client errors (4xx) and server errors (5xx).
+| Class | Meaning | Common causes |
+|-------|---------|---------------|
+| **2xx** | Success | Healthy traffic. |
+| **3xx** | Redirect | HTTP→HTTPS, canonical-URL redirects. |
+| **4xx** | Client error | `404` for missing assets, `403` from access rules, `429` rate-limited. |
+| **5xx** | Server error | Origin down, TLS handshake failed, edge timeout. |
 
---- 
+## How to read the panel
 
-## How to read it:
-- The main numbers show the total count of 4xx and 5xx requests.
-- The colored bars represent the volume of each type of error, with 4xx errors shown in yellow and 5xx errors in red.
-- The graph displays how these errors fluctuate over time, helping you monitor issues and trends in CDN performance.
+| Element | Meaning |
+|---------|---------|
+| 4xx counter | Count of client-side errors in the window. Yellow series. |
+| 5xx counter | Count of server-side errors. Red series. |
+| Time-series chart | Distribution over time — find spikes. |
+
+## Pull via API
+
+```bash
+curl -sS "https://api.tenbyte.io/cdn/distributions/$DISTRIBUTION_ID/analytics/responses?from=2026-05-01T00:00:00Z&to=2026-05-09T00:00:00Z&granularity=hour" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN" | jq
+```
+
+```json
+{
+  "totals": {"2xx": 4456012, "3xx": 12000, "4xx": 33000, "5xx": 222},
+  "series": [
+    {"ts": "2026-05-01T00:00:00Z", "2xx": 1923000, "4xx": 1500, "5xx": 12}
+  ]
+}
+```
+
+## Diagnose a 4xx spike
+
+```mermaid
+flowchart TD
+    SPIKE[4xx spike] --> Q1{What status?}
+    Q1 -- 404 --> R1[Check recent deploys<br/>Asset paths changed?]
+    Q1 -- 403 --> R2[Token / referrer / IP /<br/>country rule blocking]
+    Q1 -- 429 --> R3[Origin rate-limiting or<br/>edge throttling abuse]
+    Q1 -- other --> R4[Inspect raw access<br/>logs for top URLs]
+```
+
+| Status | Likely cause | Action |
+|--------|--------------|--------|
+| `404` | Stale URLs after a deploy, broken `<img>` `srcset`, robots probing. | Audit recent deploys, fix references, consider a `404` cache rule. |
+| `403` | [Access rule](/docs/cdn/distributions/access-rules/overview) blocked the request. | Inspect rule logs; verify intended audience can pass. |
+| `401` | Origin rejected an auth-protected path. | Check upstream credentials. |
+| `405` | Method not allowed. | Origin or rule disallows verb (often `OPTIONS` preflight). |
+| `429` | Rate limit hit. | Check origin throttling and edge protection settings. |
+
+## Diagnose a 5xx spike
+
+```mermaid
+flowchart TD
+    SPIKE5[5xx spike] --> Q1{Origin healthy?}
+    Q1 -- no --> R1[Origin outage<br/>Roll back / scale up]
+    Q1 -- yes --> Q2{Edge → origin TLS OK?}
+    Q2 -- no --> R2[Cert expired or<br/>SNI mismatch]
+    Q2 -- yes --> Q3{Edge timing out?}
+    Q3 -- yes --> R3[Origin slow or<br/>far from edge]
+    Q3 -- no --> R4[Open a support ticket<br/>with purge_id / window]
+```
+
+| Status | Likely cause | Action |
+|--------|--------------|--------|
+| `502` | Origin unreachable, dropped connection, TLS failure. | Check origin health and certs. |
+| `503` | Origin overloaded or returning `Retry-After`. | Scale origin; consider edge `Retry-After` aware caching. |
+| `504` | Edge timed out waiting for origin. | Investigate origin latency; raise timeouts only as a last resort. |
+
+## Operational tips
+
+- **Alert on rate, not absolute count.** `5xx > 0.1% of requests for 5 min` beats a fixed threshold across distributions of different size.
+- **Correlate with deploys.** Most 4xx spikes are deploys with stale paths; first action on a spike is "what shipped?"
+- **Cache `404`s briefly.** A short TTL on `404` cuts origin load during a probe storm. Configure via [cache rules](/docs/cdn/distributions/cache-rules).
+- **Watch the edge → origin TLS expiry.** A silent cert renewal failure shows up as `502`.
+- **Combine with [Cache hit ratio](/docs/cdn/analytics/cache-hit-ratio).** Falling CHR + rising 5xx = origin couldn't keep up with the cold-start spike.

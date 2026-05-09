@@ -1,102 +1,171 @@
 ---
 title: 'Create a CDN Distribution'
 sidebarTitle: 'Create a Distribution'
-icon: 'heart-plus'
+description: 'Create a Tenbyte CDN distribution from the console or API. Covers domain setup, cache strategy, origin types, and host header config.'
+icon: 'circle-plus'
 ---
 
-Configure a CDN distribution, connect your origin, and cache content across Tenbyte’s global edge network for faster delivery.
+A **distribution** is the CDN endpoint your users hit. It maps a hostname to one or more origins, applies cache and access rules, and serves traffic from edge PoPs.
 
-In a few quick steps, you can create your **first CDN distribution**.
+## Prerequisites
 
-## Name Your Distribution
+- A reachable origin (HTTPS hostname, IP, or S3-compatible bucket).
+- DNS access if you plan to use a custom domain (you'll add a CNAME).
+- An API token if creating distributions from CI/CD.
 
-In the Distribution Name field, enter a clear name for your distribution.
+## Steps
 
---- 
+<Steps>
+  <Step title="Name the distribution">
+    Use a clear, environment-prefixed name (`prod-web`, `staging-images`). Names show up in audit logs and metrics.
+  </Step>
+  <Step title="Choose a domain type">
+    System-generated for quick tests, custom domain for production.
+  </Step>
+  <Step title="Pick a cache strategy">
+    Static, VOD, livestream, or dynamic — sets sensible TTL defaults you can override later.
+  </Step>
+  <Step title="Connect an origin">
+    Hostname, IP, or S3-compatible bucket.
+  </Step>
+  <Step title="Configure advanced settings">
+    Custom Host header for virtual-hosted origins.
+  </Step>
+  <Step title="Verify with curl">
+    `curl -I` the distribution domain and confirm a `200`.
+  </Step>
+</Steps>
 
-## Choose a Domain Type
+## Domain type
 
-Under **Domain Type**, select how the CDN domain will be assigned for your distribution. 
+<Frame caption="Domain Type">
+    <img src="/images/cdn/03.png" alt="Domain Type" />
+</Frame>
 
-    <Frame caption="Domain Type">
-        <img src="/images/cdn/03.png" alt="Domain Type" />
-    </Frame>
+| Option | When to use |
+|--------|-------------|
+| **System Generated** | Quick test, internal tools, or when DNS isn't ready. Tenbyte gives you a `<id>.tenbytecdn.com` host. |
+| **Custom** | Production. Add `cdn.yoursite.com` and CNAME it to the system-generated host. |
 
-You have two options:
+For a custom domain, create a DNS record like:
 
-    1. **System Generated:** Tenbyte automatically provides a CDN domain for you.
-    2. **Custom:** Use your own domain for the CDN (e.g., **`cdn.yoursite.com`**).
+```text
+cdn.yoursite.com.   300   IN   CNAME   your-distribution.tenbytecdn.com.
+```
 
---- 
+Issue an SSL cert in [SSL](/docs/cdn/distributions/ssl) before going live.
 
-## Choose a Cache Strategy
-The Cache Strategy determines how Tenbyte CDN caches your content. 
+## Cache strategy
 
-    <Frame caption="Cache Strategy">
-        <img src="/images/cdn/04.png" alt="Cache Strategy" />
-    </Frame>
+<Frame caption="Cache Strategy">
+    <img src="/images/cdn/04.png" alt="Cache Strategy" />
+</Frame>
 
-Select the option that best matches the type of assets you are serving:
-    1. **Static Content:** Full cache with long TTL. Best for files that rarely change, such as images, JavaScript, CSS, fonts, and other static assets.
-    2. **Video on Demand (VOD):** Segmented caching optimized for large media files. Used for MP4, HLS, DASH, and other video playback formats.
-    3. **Livestream:** Short TTL with frequent refresh. Ideal for live streaming workflows where segments update continuously (HLS/DASH live).
-    4. **Dynamic Content:** Minimal caching suitable for APIs, pages with dynamic data, and frequently changing responses. Use this when content must always be fresh.
+| Strategy | Default TTL profile | Use for |
+|----------|---------------------|---------|
+| **Static** | Long TTL, full cache | Images, JS, CSS, fonts |
+| **VOD** | Segmented cache, large object support | MP4, HLS / DASH on-demand |
+| **Livestream** | Short TTL, frequent refresh | HLS / DASH live segments |
+| **Dynamic** | Minimal cache | API responses, SSR pages |
 
---- 
+The strategy seeds defaults; you can still add fine-grained [cache rules](/docs/cdn/distributions/cache-rules) per path.
 
-## Set the Origin
+## Origin
 
-The Origin is the server or storage location where your content is stored. Tenbyte CDN fetches files from this location when serving users. You can set your origin using either a Hostname or an S3 Bucket.
+The origin is the upstream the CDN pulls from on cache miss. Pick one of two types.
 
-### Hostname Origin
+### Hostname origin
 
-Select Hostname if your files are hosted on a web server, application server, or any publicly reachable URL.
+<Frame caption="Hostname Origin">
+    <img src="/images/cdn/05.png" alt="Hostname Origin" />
+</Frame>
 
-    <Frame caption="Hostname Origin">
-        <img src="/images/cdn/05.png" alt="Hostname Origin" />
-    </Frame>
+- **Origin Label** — internal name.
+- **Hostname / IP** — must be reachable over HTTPS or HTTP.
 
-    - **Origin Label:** Give your origin a name for easy identification.
-    - **Hostname / IP Address:** Enter the server’s full hostname or IP address.
+### S3-compatible origin
 
-### S3 Bucket Origin
+<Frame caption="S3 Bucket Origin">
+    <img src="/images/cdn/06.png" alt="S3 Bucket Origin" />
+</Frame>
 
-Select S3 Bucket if your files are stored in an **S3-compatible storage service**.
+- **Origin Label** — internal name.
+- **Hostname** — endpoint of the S3-compatible service (e.g. `s3.amazonaws.com`, `s3.us-east-1.amazonaws.com`, `nyc3.digitaloceanspaces.com`).
+- **Access Key ID** / **Secret Access Key** — credentials with read access to the bucket.
+- **Bucket** — bucket name.
+- **Region** — bucket region.
 
-    <Frame caption="S3 Bucket Origin">
-        <img src="/images/cdn/06.png" alt="S3 Bucket Origin" />
-    </Frame>
+<Warning>
+    Use a **read-only** IAM user/key. Never reuse a key with write or delete permissions. Rotate the key periodically — Tenbyte's signed-fetch logic handles rotation transparently if you update both fields together.
+</Warning>
 
-    - **Origin Label:** Name your origin for internal identification.
-    - **Hostname:** Enter the hostname of your S3-compatible storage.
-    - **Access Key ID:** Provide your storage access key for authenticated access.
-    - **Secret Access Key:** Enter the secret key associated with the access key.
-    - **Bucket:** Specify the bucket name where your files are stored.
-    - **Region:** Choose the region of your S3 bucket.
+Verify the origin can be read with the same credentials:
 
-<Warning>Make sure your access keys and bucket permissions allow the CDN to read files.</Warning>
+```bash
+aws s3 ls "s3://my-bucket/" \
+  --endpoint-url "https://s3.us-east-1.amazonaws.com" \
+  --region us-east-1
+```
 
---- 
+## Advanced settings
 
-## Advanced Settings
+<Frame caption="Advanced Settings">
+    <img src="/images/cdn/46.png" alt="Advanced Settings" />
+</Frame>
 
-The Advanced Settings section allows you to configure additional request headers that **Tenbyte CDN** will send to your origin server.
+The **Host header** is what the origin sees in `Host:`. Set it explicitly when:
 
-    <Frame caption="Advanced Settings">
-        <img src="/images/cdn/46.png" alt="Advanced Settings" />
-    </Frame>
+- Your origin uses virtual hosting (multiple sites on one IP).
+- The origin's TLS cert is issued for a specific hostname.
+- A reverse proxy or load balancer routes by Host.
 
-    - **Host Header:** Use this field to set a custom Host header for CDN requests.
-        1. **Key:** The header name.
-        2. **Value:** The hostname your origin server expects.
+| Field | Example |
+|-------|---------|
+| Key | `Host` |
+| Value | `origin.yoursite.com` |
 
-<Note>These settings are optional and are used when your origin requires specific headers for routing or authentication.</Note>
+## Verify the distribution
 
-- Use this option when:
+```bash
+export CDN_HOST="https://your-distribution.tenbytecdn.com"
+curl -sSI "$CDN_HOST/" | grep -iE 'http/|x-cache|server'
+```
 
-    - Your server uses virtual hosting
-    - You want the CDN to forward a specific domain instead of the default origin URL
-    - Your backend needs a matching Host header for SSL or routing rules
+Expected:
 
+```text
+HTTP/2 200
+x-cache: MISS    # first request
+server: tenbyte-cdn
+```
 
-- After entering all the required information, click **Create Distribution**. Your CDN distribution will be created, and you’ll see it listed on the Distributions Dashboard.
+Repeat the call. `x-cache` should flip to `HIT`.
+
+## Create via API
+
+```bash
+curl -X POST "https://api.tenbyte.io/cdn/distributions" \
+  -H "Authorization: Bearer $TENBYTE_API_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "prod-web",
+    "domain_type": "system",
+    "cache_strategy": "static",
+    "origin": {
+      "type": "hostname",
+      "label": "origin-prod",
+      "hostname": "origin.yoursite.com"
+    }
+  }'
+```
+
+See the [CDN API reference](/api-reference/cdn) for the full schema and updated field names.
+
+## Common pitfalls
+
+| Symptom | Cause |
+|---------|-------|
+| `502 Bad Gateway` from CDN | Origin unreachable, wrong port, or TLS cert mismatch. Check origin from outside your network. |
+| `403` from S3 origin | Credentials missing `s3:GetObject` on the bucket / prefix. |
+| Wrong content served | Custom Host header missing — virtual host routing on origin picks the default vhost. |
+| `x-cache: MISS` every request | Origin sends `Cache-Control: no-store` or `private`. Override via [cache rules](/docs/cdn/distributions/cache-rules). |
