@@ -1,73 +1,339 @@
 ---
 title: "Changelog"
-description: "Product updates and announcements"
+description: "Product updates from Tenbyte Ltd."
 sidebarTitle: "Product Updates"
 icon: "arrow-up-down"
 ---
 
-<Update label="15 February 2026" description="v1.0.0"tags={["Vidinfra Webinar"]}>
-  ### Vidinfra Webinar — launched
+<Update label="01 May 2026" description="v1.4.2" tags={["Live Streaming", "Improvements"]}>
+  ### Live Streaming — VP9 & Opus Support
 
-  Introducing Tenbyte Webinar — a live streaming platform for online sessions, classes, and events. Create rooms, configure presets, go live with a stage, and manage participants in real time.
+  The encoder now supports two additional codecs for live streams, giving teams more flexibility in how they deliver video.
 
-  #### ROOMS & SESSIONS
-  •	Create rooms and sessions with title, description, and optional scheduled start time  
-  •	Session status tracking — Created, Live, and Ended — with timestamps and duration  
-  •	Session detail view with analytics, recordings, and attendance log  
+  #### ADDED
+  • **VP9 video encoding** — a modern, open codec well-suited for browser-based delivery. Supports two rate-control modes: `capped-crf` (default, quality-capped) and `cbr` (constant bitrate, ideal for strict bandwidth budgets). VP9 streams are delivered in fMP4 format  
+  • **Opus audio encoding** — the recommended audio companion for VP9 ladders, using variable bitrate at 48 kHz for efficient, high-quality audio  
+  • **Reference VP9 + Opus configuration** — a ready-to-use 5-tier ladder (240p to 1080p) included out of the box, following Google's live encoding recommendations  
 
-  #### PRESETS
-  •	Create reusable presets to configure stage, chat, poll, and general permissions per session  
-  •	Supports Vidinfra Studio and RTMP preset types  
-
-  #### LIVE STAGE
-  •	Host and on-stage participants can go live with camera, microphone, and screen share  
-  •	Main spotlight view with sidebar strip for all on-stage participants  
-  •	Audience can watch and request to join the stage; on-stage participants can leave at any time  
-  •	Live viewer count, session timer, and recording indicator shown in the top bar  
-
-  #### HOST CONTROLS
-  •	Mic and camera controls for host and on-stage participants  
-  •	Participants panel with separate on-stage and audience lists; waiting queue for stage requests  
-  •	Host can mute, turn off video, or remove participants from stage, and end the session for all  
-
-  #### CHAT, POLLS & RECORDING
-  •	Live chat and real-time polls available based on preset permissions  
-  •	Sessions recorded automatically when enabled; recordings available after session ends  
-  •	Attendance log with join/leave times and duration, exportable as CSV  
+  #### IMPROVED
+  • Low-latency tuning on the default H.264 configuration — glass-to-glass delay reduced to approximately 4–5 seconds typical  
 </Update>
 
-<Update label="28 January 2026" description="v1.0.1" tags={["Vidinfra Player", "Improvements"]}>
+<Update label="15 February 2026" description="v1.3.0" tags={["Vidinfra Webinar", "Improvements"]}>
+  ### Vidinfra Webinar — Session Recording
+
+  Sessions can now be recorded and accessed immediately after they end.
+
+  #### ADDED
+  • **Automatic recording** — enable recording per session or globally via presets; recording begins the moment the session goes live  
+  • **Recording indicator** — a live recording badge is displayed in the top bar for all participants during a recorded session  
+  • **Post-session playback** — recordings are processed and available in the session detail view within minutes of the session ending  
+  • **Share** — hosts can generate a shareable playback link for the recorded session directly from the dashboard  
+  
+</Update>
+
+<Update label="07 May 2025" description="v1.4.1" tags={["Live Streaming", "Bug Fixes"]}>
+  ### Live Streaming — Bug Fixes
+
+  #### FIXED
+  • **Pull ingest stalling on UDP sources** — pull connections to UDP sources occasionally stalled silently after several hours without dropping the stream or triggering reconnection  
+  • **H.265 streams not playing in Safari** — H.265 renditions were being served to Safari clients that do not support HEVC, causing playback failures. Codec capability detection now correctly filters renditions per client  
+  • **Mixed-codec ladder missing renditions in DASH manifest** — DASH manifests for streams with both H.264 and H.265 renditions were occasionally omitting the H.264 tiers  
+  • **Pull reconnect not honouring retry interval** — the configured retry interval was being ignored on the second reconnect attempt, causing aggressive reconnect loops  
+  • **Source health status stuck on "Connecting"** — pull ingest connections that stabilised successfully were occasionally reporting a stale "Connecting" status in the dashboard  
+</Update>
+
+<Update label="30 November 2025" description="v1.4.0" tags={["Live Streaming", "Improvements"]}>
+  ### Live Streaming — Pull Ingest
+
+  Tenbyte can now connect to an existing stream source directly, removing the need to push from the encoder side.
+
+  #### ADDED
+  • **Pull ingest** — provide a source URL and Tenbyte initiates and maintains the ingest connection, supporting SRT, RTMP, and UDP sources  
+  • **Automatic reconnection** — pull ingest connections recover automatically if the source becomes temporarily unavailable, with configurable retry intervals  
+  • **Source health monitoring** — real-time visibility into pull connection status and source bitrate from the dashboard and API  
+  • **Pull + push fallback** — configure a pull source with a push ingest URL as fallback, so streams switch automatically if the pull source drops  
+</Update>
+
+
+<Update label="28 November 2025" description="v1.3.1" tags={["Vidinfra", "Improvements", "Bug Fixes"]}>
   ### Vidinfra Player
 
-  #### Added  
+  A focused quality pass on the Vidinfra Player across desktop and mobile.
+
+  #### ADDED
   • Volume and muted state persistence across videos  
-  • Double-click to toggle fullscreen mode on desktop  
+  • Double-click to toggle fullscreen on desktop  
   • Comprehensive keyboard shortcuts and accessibility features  
-  • Compact control bar layout optimized for small screens under 300px width  
-  • Dark backdrop to mobile settings panel for better visibility  
+  • Compact control bar layout optimised for screens under 300px wide  
+  • Dark backdrop on the mobile settings panel for improved readability  
 
-  #### Enhanced  
-  • Click-to-play functionality on desktop browsers  
-  • Player controls auto-hide timing for better viewing experience  
-  • Context menu redesigned with About and Keyboard Shortcuts views  
+  #### IMPROVED
+  • Click-to-play behaviour on desktop browsers  
+  • Controls auto-hide timing for a cleaner viewing experience  
+  • Context menu redesigned with dedicated About and Keyboard Shortcuts views  
   • Mobile tap controls for more reliable play/pause toggling  
-  • Mobile seek bar with increased touch target area and accurate scrubbing  
-  • Centered play button, loading spinner, and seek buttons within the visible video area  
-  • Player controls positioning in portrait fullscreen mode on mobile  
+  • Mobile seek bar with a larger touch target and more accurate scrubbing  
+  • Centred play button, loading spinner, and seek buttons within the visible video area  
+  • Controls positioning in portrait fullscreen mode on mobile  
 
-  #### Fixed  
-  • Memory leaks by properly cleaning up timers on mobile devices  
-  • Settings panel cutoff issues in iframes and mobile devices  
-  • iOS-specific issues with controls animation and fullscreen centering  
-  • Standardized all seek intervals to 10 seconds for consistent navigation  
-  • Separated mute and volume controls to function independently
+  #### FIXED
+  • Memory leaks from timers not being cleaned up properly on mobile devices  
+  • Settings panel being cut off in iframes and constrained mobile viewports  
+  • iOS-specific issues with controls animation and fullscreen centring  
+  • All seek intervals normalised to 10 seconds for consistent navigation  
+  • Mute and volume controls now function independently of each other  
+</Update>
+
+<Update label="22 September 2025" description="v1.3.1" tags={["Live Streaming", "Improvements", "Bug Fixes"]}>
+  ### Live Streaming — H.265 Encoding
+
+  H.265 is now available as an encoding option for streams requiring better quality at lower bitrates.
+
+  #### ADDED
+  • **H.265 (HEVC) encoding** — configure renditions to use H.265 for significantly improved compression efficiency over H.264 at equivalent quality  
+  • **H.265 rendition ladder** — a reference multi-rendition configuration for H.265 streams included out of the box  
+  • **Mixed-codec ladders** — H.264 and H.265 renditions can coexist in the same stream for broad device compatibility  
+
+  #### FIXED
+  • **SRT reconnect loop on encoder restart** — restarting the encoder mid-stream occasionally caused the ingest endpoint to loop in a reconnect state rather than cleanly accepting the new connection  
+  • **SRT encrypted streams dropping frames** — streams using AES-256 encryption were intermittently dropping frames under high bitrate loads  
 </Update>
 
 
-<Update label="15 November 2025" description="v1.0.0" tags={["Cloud"]}>
-  ### T2 Storage Arrived 
-  Introduced the new T2 Object Storage service.
+<Update label="15 June 2025" description="v1.1.0" tags={["Cloud", "Improvements"]}>
+  ### Cloud — T2 Object Storage
 
-  T2 Object Storage offers highly scalable and durable cloud storage for unstructured data, with S3 compatibility and improved performance.
+  Introduced T2 Object Storage — Tenbyte's new generation of highly scalable, durable object storage for unstructured data.
+
+  #### WHAT'S NEW
+  • **S3-compatible API** — drop-in compatibility for existing tooling, SDKs, and workflows  
+  • **High durability** — data replicated across multiple availability zones  
+  • **Improved throughput** — optimised for media file ingest, backups, and large-scale data workloads  
+  • **Lifecycle policies** — automate object expiration and data transition rules  
+  • **Access control** — bucket-level and object-level permissions with fine-grained policies  
+  • Available immediately under Tenbyte Cloud → Storage  
+
 </Update>
 
+<Update label="12 May 2025" description="v1.2.1" tags={["Vidinfra Webinar", "Bug Fixes"]}>
+  ### Vidinfra Webinar — Bug Fixes
+
+  #### FIXED
+  • **Poll results not updating in real time** — audience responses were occasionally failing to aggregate live, requiring a page refresh to see updated counts  
+  • **CSV export missing participants** — attendees who joined and left within the first 30 seconds of a session were being omitted from the attendance log  
+  • **Pinned messages lost on rejoin** — participants who left and rejoined a session mid-way were not seeing the currently pinned chat message  
+  
+</Update>
+
+<Update label="23 April 2025" description="v1.2.1" tags={["Live Streaming", "Improvements", "Bug Fixes"]}>
+
+  ### Live Streaming — RTSP Ingest & Protocol Improvements
+
+  Expanded ingest protocol support and fixed a long-standing SRT reliability issue on Linux.
+
+  #### ADDED
+  • **RTSP ingest** — pull live feeds directly from IP cameras and hardware encoders. Supports TCP and UDP transport, with automatic fallback between them  
+  • **UDP MPEG-TS ingest** — accept broadcast contribution feeds over UDP, useful for satellite links and professional broadcast equipment  
+  • **`--protocols` flag** — lists which ingest protocols (RTMP, SRT, RTSP, UDP) are available in the running binary, making it easy to verify your setup  
+  • **HE-AAC audio support (opt-in)** — enables HE-AAC v1 and HE-AAC v2 for efficient, high-quality audio at low bitrates  
+
+  #### FIXED
+  • **SRT ingest on Linux** — SRT streams were silently unavailable in Linux builds despite the protocol being enabled, causing `srt://` sources to fail at runtime. Now resolved and verified automatically before each release  
+  • **RTMP probe stall** — streams from certain RTMP servers occasionally stalled during the initial connection phase, causing the encoder to loop in reconnect. Resolved by aligning with standard behaviour across all major RTMP servers  
+</Update>
+
+<Update label="20 April 2025" description="v1.2.0" tags={["Vidinfra", "Improvements"]}>
+
+### Vidinfra — Real-time Analytics and introducing DRM Features
+
+#### ADDED
+ 
+• **DRM & access control** — Widevine, FairPlay, and PlayReady with token-signed playback URLs  
+
+• **Analytics** — play counts, geographic distribution, and bandwidth usage per video  
+
+
+</Update>
+
+<Update label="15 April 2025" description="v1.1.0" tags={["Live Streaming", "Improvements"]}>
+  ### Live Streaming — SRT Ingest
+
+  SRT is now supported as a second ingest protocol alongside RTMP, offering lower latency and built-in packet recovery.
+
+  #### ADDED
+  • **SRT ingest** — send live streams to Tenbyte via SRT from any compatible encoder including OBS, vMix, and hardware devices  
+  • **Caller & listener modes** — SRT connections can be initiated from either the encoder or the Tenbyte ingest endpoint  
+  • **Stream encryption** — optional AES-128 and AES-256 passphrase encryption on SRT streams for secure contribution  
+  • **Latency tuning** — configurable SRT latency parameter to balance delay against packet recovery on lossy networks  
+</Update>
+
+<Update label="10 April 2025" description="v1.2.0" tags={["Vidinfra Webinar", "Improvements"]}>
+  ### Vidinfra Webinar — Attendance report, Chat Reactions & Pinned Messages
+
+  Session attendance data can now be exported for reporting and record-keeping. Chats have a greater look now.
+
+  #### ADDED
+  • **CSV export** — download a full attendance log per session, including participant names, join/leave timestamps, and total time in session  
+  • Available from the session detail view under the Attendance tab  
+  • **Emoji reactions** — audience and participants can react to any chat message with an emoji, with live reaction counts updating in real time  
+  • **Pin messages** — hosts can pin any chat message to the top of the chat panel, keeping key links or announcements visible throughout the session
+</Update>
+
+
+<Update label="08 April 2025" description="v1.0.0" tags={["Live Streaming", "Launched"]}>
+
+### Tenbyte Live Streaming — Live Broadcast Infrastructure
+
+• **Push ingest** — RTMP and SRT from OBS, vMix, or any hardware encoder  
+ 
+• **Multi-rendition transcoding** — simultaneous quality tiers with adaptive-bitrate HLS and DASH output  
+• **H.264 encoding** — industry-standard codec with configurable quality, bitrate, and GOP settings  
+• **AAC audio** — high-quality audio encoding across all stream tiers  
+• **Linear & live-event modes** — 24/7 always-on channels or one-time scheduled broadcasts  
+• **Custom rendition ladder** — full control over resolution, codec, bitrate, and frame rate  
+• **CMAF packaging** — fMP4 segments compatible with both HLS and DASH players, with clean VOD fallback on stream end  
+• **CDN-ready origin URLs** — HLS/DASH output ready for CDN distribution  
+• **Webhook events** — signed POST notifications for every stream lifecycle event  
+• **API-first** — create, update, start, and stop streams programmatically  
+
+</Update>
+
+<Update label="23 January 2025" description="v1.1.1" tags={["Vidinfra", "Improvements", "Bug Fixes"]}>
+  ### Vidinfra — Video Platform Enhancements
+
+  #### ADDED
+  • **DRM multi-key support** — assign different encryption keys per rendition (Widevine, FairPlay, PlayReady) for tiered content protection  
+  • **Clip & trim API** — programmatically extract clips from an ingested video without re-uploading the source file  
+  • **Webhook retry policy** — configurable retry count and backoff for failed webhook deliveries  
+  • **Per-video analytics** — play rate, buffering ratio, and completion rate now available at the individual video level  
+
+  #### IMPROVED
+  • Shorter transcoding wait times for videos under 2 minutes, processed via a dedicated fast-path queue  
+  • Signed URLs now support optional IP binding for tighter access control  
+  • Player SDK bundle size reduced by 18% through dependency trimming  
+
+  #### FIXED
+  • Audio/video sync drift on videos encoded at 59.94 fps  
+  • Chapter markers not rendering correctly in Safari 17  
+
+</Update>
+
+<Update label="22 January 2025" description="v1.1.0" tags={["Vidinfra Webinar", "Improvements"]}>
+  ### Vidinfra Webinar — Polls
+
+  Hosts and Participants can now create and launch real-time polls during a session.
+
+  #### ADDED
+  • **Live polls** — create single or multiple-choice polls from the host panel and launch them during a session  
+  • **Real-time results** — audience responses aggregate instantly, visible to the host and optionally to all attendees  
+  • **Poll permissions** — control poll visibility and participation via session presets  
+</Update>
+
+<Update label="18 January 2025" description="v1.3.0" tags={["CDN", "Improvements"]}>
+
+### CDN - Access Rules & Signed URLs
+
+#### ADDED
+
+• **Real-time analytics** — bandwidth, requests, cache-hit ratio, and response class breakdown  
+
+</Update>
+
+<Update label="15 January 2025" description="v1.0.0" tags={["Vidinfra Webinar", "Launched"]}>
+  ### Vidinfra Webinar — launched
+
+  Introducing Tenbyte Webinar — a managed live-session platform for online classes, events, and interactive broadcasts.
+
+  #### ROOMS & SESSIONS
+  • Create rooms and sessions with title, description, and optional scheduled start time  
+  • Session status tracking — Created, Live, and Ended — with timestamps and total duration  
+  • Session detail view with analytics, recordings, and attendance log  
+
+  #### PRESETS
+  • Create reusable presets to configure stage, chat, poll, and general permissions per session  
+  • Supports Vidinfra Studio and RTMP preset types for flexible broadcasting setups  
+
+  #### LIVE STAGE
+  • Host and on-stage participants can broadcast with camera, microphone, and screen share  
+  • Main spotlight view with a sidebar strip showing all on-stage participants  
+  • Audience members can watch and request to join the stage; on-stage participants can leave at any time  
+  • Live viewer count, session timer, and recording indicator displayed in the top bar  
+
+  #### HOST CONTROLS
+  • Full mic and camera controls for the host and all on-stage participants  
+  • Participants panel with separate on-stage and audience lists, plus a waiting queue for stage join requests  
+  • Host can mute, disable video, or remove participants from the stage, and end the session for all attendees  
+
+</Update>
+
+<Update label="12 November 2024" description="v1.2.0" tags={["CDN", "Improvements"]}>
+
+  ### CDN — Image Optimisation Now Generally Available
+
+  #### ADDED
+
+  • Automatic format negotiation: serves WebP or AVIF where the browser supports it, falls back to JPEG/PNG  
+  • On-the-fly resize, crop, and quality control via URL query parameters  
+  • Responsive image transformations cached at the edge — no repeated origin requests  
+  • Multi-CDN failover improvements — weighted fallback rules and per-path CDN pinning now supported  
+</Update>
+
+<Update label="20 October 2024" description="v1.0.0" tags={["Vidinfra", "Launched"]}>
+
+### Vidinfra — Video Hosting & Delivery
+
+End-to-end video infrastructure for developers and media teams.
+
+• **Ingest & transcoding** — upload via API or dashboard; automatic multi-rendition encoding to HLS and MPEG-DASH  
+• **Adaptive bitrate** — per-device quality ladder with intelligent client-side rendition selection  
+• **Global delivery** — smart-routing multi-CDN engine with a 99.99% availability target  
+• **DRM & access control** — Widevine, FairPlay, and PlayReady with token-signed playback URLs  
+• **Player SDK** — embeddable player with customisable controls, themes, and branding  
+• **Webhooks** — real-time lifecycle events for upload, encoding, and delivery stages  
+• **Analytics** — play counts, geographic distribution, and bandwidth usage per video  
+
+
+</Update>
+
+<Update label="10 September 2024" description="v1.1.0" tags={["CDN", "Improvements"]}>
+
+### CDN - Access Rules & Signed URLs
+
+#### ADDED
+
+• **Access rules** — country, IP, referrer, and token-gate policies per path  
+• **Signed URLs** — time-limited token authentication for protected content 
+
+
+</Update>
+
+<Update label="06 August 2024" description="v1.0.0" tags={["CDN", "Launched"]}>
+
+### Tenbyte CDN — Global Content Delivery
+
+• **Distributions** — configure CDN endpoints mapped to HTTP, S3, or custom origins  
+• **Smart routing** — anycast with continuous health checks routing each request to the nearest healthy edge  
+• **Multi-CDN** — intelligent failover across multiple CDN providers for maximum availability  
+• **Cache rules** — per-path TTL, query-string handling, and compression settings  
+
+• **Header rules** — add or remove request and response headers at the edge  
+• **Purge** — invalidate cached content by exact path or pattern, processed in under 500 ms globally  
+ 
+• **REST API & webhooks** — full programmatic control over distributions, rules, and purge events  
+
+</Update>
+
+<Update label="06 August 2024" description="v1.0.0" tags={["Cloud", "Launched"]}>
+
+### Tenbyte Cloud — Infrastructure Platform
+
+• **Virtual Machines** — scalable compute instances on enterprise-grade hardware for application hosting and media workloads  
+• **Object Storage** — scalable, cost-effective storage for media files, backups, and large datasets  
+• **Virtual Private Cloud (VPC)** — custom IP ranges, subnets, and security group rules  
+• **DDoS protection** — platform-level mitigation with guaranteed service continuity  
+• **Snapshots & Backups** — scheduled and on-demand snapshots for compute instances and volumes  
+• **Monitoring & Analytics** — resource utilisation dashboards with alerting  
+• **99.98% uptime SLA** — high-availability architecture across all core services  
+• **24/7 support** — migration, setup, and troubleshooting assistance  
+</Update>
