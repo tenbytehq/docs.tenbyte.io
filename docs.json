@@ -431,6 +431,10 @@
             "pages": ["changelog"]
           }
         ]
+      },
+      {
+        "tab": "Roadmap",
+        "pages": "roadmap"
       }
     ],
     "global": {
