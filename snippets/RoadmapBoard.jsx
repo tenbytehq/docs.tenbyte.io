@@ -3,12 +3,110 @@ export const RoadmapBoard = ({ data }) => {
 
   const [activeTask, setActiveTask] = useState(null);
   const [filter, setFilter] = useState("All");
+  const [serverCounts, setServerCounts] = useState({});
+  const [localCounts, setLocalCounts] = useState({});
+
+  const disqusId = (id) => "rb-v2-" + id;
+
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtml = html.style.overflow;
+    const prevBody = body.style.overflow;
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    return () => {
+      html.style.overflow = prevHtml;
+      body.style.overflow = prevBody;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const harvest = () => {
+      const next = {};
+      let changed = false;
+      document
+        .querySelectorAll(".rb-dsq-count[data-disqus-identifier]")
+        .forEach((el) => {
+          const id = el.getAttribute("data-disqus-identifier");
+          const m = el.textContent.match(/(\d+)/);
+          if (m) {
+            next[id] = parseInt(m[1], 10);
+            changed = true;
+          }
+        });
+      if (changed) setServerCounts((prev) => ({ ...prev, ...next }));
+    };
+    const obs = new MutationObserver(harvest);
+    document
+      .querySelectorAll(".rb-dsq-count[data-disqus-identifier]")
+      .forEach((el) =>
+        obs.observe(el, { childList: true, characterData: true, subtree: true })
+      );
+    harvest();
+    return () => obs.disconnect();
+  }, [filter, activeTask]);
 
   useEffect(() => {
     if (!activeTask) return;
     const onKey = (e) => { if (e.key === "Escape") setActiveTask(null); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+  }, [activeTask]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.DISQUSWIDGETS) {
+      window.DISQUSWIDGETS.getCount({ reset: true });
+      return;
+    }
+    if (document.getElementById("dsq-count-scr")) return;
+    const s = document.createElement("script");
+    s.src = "https://tenbyte-1.disqus.com/count.js";
+    s.id = "dsq-count-scr";
+    s.async = true;
+    document.body.appendChild(s);
+  }, [filter, activeTask]);
+
+  useEffect(() => {
+    if (!activeTask || typeof window === "undefined") return;
+
+    const taskId = "rb-v2-" + activeTask.id;
+    const taskTitle = activeTask.title;
+    const basePath = window.location.pathname.replace(/\/$/, "");
+    const taskUrl =
+      window.location.origin + basePath + "/task/" + taskId;
+
+    try {
+      delete window.DISQUS;
+    } catch (e) {
+      window.DISQUS = undefined;
+    }
+    const prev = document.getElementById("dsq-embed-scr");
+    if (prev) prev.remove();
+
+    window.disqus_config = function () {
+      this.page.url = taskUrl;
+      this.page.identifier = taskId;
+      this.page.title = taskTitle;
+      this.callbacks.onNewComment = [
+        function () {
+          setLocalCounts((prev) => ({
+            ...prev,
+            [taskId]: (prev[taskId] || 0) + 1,
+          }));
+        },
+      ];
+    };
+
+    const s = document.createElement("script");
+    s.id = "dsq-embed-scr";
+    s.src = "https://tenbyte-1.disqus.com/embed.js";
+    s.setAttribute("data-timestamp", String(+new Date()));
+    s.async = true;
+    document.head.appendChild(s);
   }, [activeTask]);
 
   const columns = [
@@ -47,9 +145,44 @@ export const RoadmapBoard = ({ data }) => {
       <div className="rb-card-date">{task.date}</div>
       <div className="rb-card-foot">
         <span className="rb-tag">{task.tag}</span>
+        <span className="rb-card-comments">
+          {(serverCounts[disqusId(task.id)] || 0) +
+            (localCounts[disqusId(task.id)] || 0)}{" "}
+          Comments
+        </span>
+        <span
+          className="disqus-comment-count rb-dsq-count"
+          data-disqus-identifier={disqusId(task.id)}
+          aria-hidden="true"
+          style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }}
+        >
+          0
+        </span>
       </div>
     </button>
   );
+
+  const colIcon = (key) => {
+    if (key === "planned")
+      return (
+        <svg className="rb-ico" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+          <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeWidth="1.5" strokeDasharray="2 2.2" />
+        </svg>
+      );
+    if (key === "inProgress")
+      return (
+        <svg className="rb-ico rb-ico-spin" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+          <circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" strokeOpacity="0.25" strokeWidth="1.6" />
+          <path d="M8 2 a6 6 0 0 1 6 6" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+      );
+    return (
+      <svg className="rb-ico" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true">
+        <circle cx="8" cy="8" r="7" fill="currentColor" />
+        <path d="M4.8 8.3 L7 10.5 L11.2 6" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    );
+  };
 
   const renderColumn = (col) => {
     const tasks = filterTasks(roadmap.columns[col.key] || []);
@@ -57,7 +190,7 @@ export const RoadmapBoard = ({ data }) => {
       <div key={col.key} className={`rb-col ${col.cls}`}>
         <div className="rb-col-head">
           <div className="rb-col-label">
-            <span className="rb-dot" />
+            {colIcon(col.key)}
             {col.label}
           </div>
           <span className="rb-count">{tasks.length}</span>
@@ -129,6 +262,10 @@ export const RoadmapBoard = ({ data }) => {
           <p className="rb-modal-body">
             {activeTask.description || "No description yet."}
           </p>
+
+          <div className="rb-modal-disqus">
+            <div id="disqus_thread" />
+          </div>
         </div>
 
         <div className="rb-modal-foot">
@@ -146,13 +283,22 @@ export const RoadmapBoard = ({ data }) => {
   return (
     <div className="rb-root w-full not-prose">
       <style>{`
-        .rb-root { color: rgb(var(--gray-900)); }
+        .rb-root {
+          color: rgb(var(--gray-900));
+          height: calc(100dvh - 8rem);
+          padding-bottom: 0.75rem;
+          display: flex; flex-direction: column;
+          overflow: hidden;
+        }
         .dark .rb-root { color: rgb(var(--gray-100)); }
 
         .rb-hero {
           margin: 0 0 24px;
           padding: 0;
+          display: flex; align-items: flex-end; justify-content: space-between;
+          gap: 24px; flex-wrap: wrap;
         }
+        .rb-hero-text { flex: 1; min-width: 0; }
         .rb-eyebrow {
           font-size: 14px; font-weight: 600; margin: 0 0 10px;
           color: rgb(var(--primary));
@@ -169,7 +315,7 @@ export const RoadmapBoard = ({ data }) => {
           color: rgb(var(--gray-500));
         }
         .dark .rb-subtitle { color: rgb(var(--gray-400)); }
-        .rb-toolbar { margin-top: 4px; margin-bottom: 24px; }
+        .rb-toolbar { margin: 0; justify-content: flex-end; }
 
         .rb-chip {
           padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 500;
@@ -188,11 +334,12 @@ export const RoadmapBoard = ({ data }) => {
           background: rgb(var(--primary)); color: #fff; border-color: rgb(var(--primary));
         }
 
-        .rb-board { width: 100%; min-width: 0; }
+        .rb-board { width: 100%; min-width: 0; flex: 1; min-height: 0; }
         .rb-col {
           min-width: 0;
-          border-radius: 12px; padding: 16px; min-height: 200px;
-          height: auto; max-height: none; overflow: visible;
+          border-radius: 12px; padding: 16px;
+          height: 100%; min-height: 0;
+          display: flex; flex-direction: column;
           background: rgb(var(--gray-50) / 0.7);
           border: 1px solid rgb(var(--gray-200) / 0.7);
         }
@@ -201,13 +348,15 @@ export const RoadmapBoard = ({ data }) => {
           border-color: rgb(var(--gray-800) / 0.7);
         }
         @media (max-width: 1023px) {
-          .rb-col { min-height: 0; }
+          .rb-col { height: auto; min-height: 0; }
         }
         .rb-card-title, .rb-card-date { word-break: break-word; overflow-wrap: anywhere; }
 
         .rb-col-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
         .rb-col-label { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
-        .rb-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .rb-ico { flex-shrink: 0; }
+        @keyframes rb-spin { to { transform: rotate(360deg); } }
+        .rb-ico-spin { animation: rb-spin 2.6s linear infinite; transform-origin: 50% 50%; }
         .rb-count {
           font-size: 11px; padding: 2px 6px; border-radius: 4px; font-variant-numeric: tabular-nums;
           background: rgb(var(--gray-200) / 0.5); color: rgb(var(--gray-600));
@@ -216,22 +365,18 @@ export const RoadmapBoard = ({ data }) => {
           background: rgb(var(--gray-800) / 0.6); color: rgb(var(--gray-400));
         }
 
-        .rb-st-planned .rb-col-label { color: rgb(var(--gray-700)); }
-        .dark .rb-st-planned .rb-col-label { color: rgb(var(--gray-300)); }
-        .rb-st-planned .rb-dot { background: rgb(var(--gray-400)); }
-        .dark .rb-st-planned .rb-dot { background: rgb(var(--gray-500)); }
+        .rb-st-planned .rb-col-label { color: rgb(var(--gray-600)); }
+        .dark .rb-st-planned .rb-col-label { color: rgb(var(--gray-400)); }
 
         .rb-st-progress .rb-col-label { color: rgb(var(--primary)); }
-        .rb-st-progress .rb-dot { background: rgb(var(--primary)); box-shadow: 0 0 0 3px rgb(var(--primary) / 0.18); }
 
         .rb-st-released .rb-col-label { color: #029C69; }
         .dark .rb-st-released .rb-col-label { color: #04C684; }
-        .rb-st-released .rb-dot { background: #029C69; box-shadow: 0 0 0 3px rgb(2 156 105 / 0.18); }
-        .dark .rb-st-released .rb-dot { background: #04C684; box-shadow: 0 0 0 3px rgb(4 198 132 / 0.18); }
 
         .rb-card-list {
           display: flex; flex-direction: column; gap: 10px;
-          max-height: 600px; overflow-y: auto; padding-right: 2px;
+          flex: 1; min-height: 0;
+          overflow-y: auto; padding-right: 2px;
           scrollbar-width: none; -ms-overflow-style: none;
         }
         .rb-card-list::-webkit-scrollbar { width: 0; height: 0; display: none; }
@@ -240,6 +385,8 @@ export const RoadmapBoard = ({ data }) => {
         }
         .rb-card {
           text-align: left; width: 100%;
+          height: 116px; flex-shrink: 0;
+          display: flex; flex-direction: column; justify-content: space-between;
           border-radius: 8px; padding: 14px; cursor: pointer;
           transition: all 0.15s;
           background: #fff; border: 1px solid rgb(var(--gray-200));
@@ -253,11 +400,18 @@ export const RoadmapBoard = ({ data }) => {
             0 0 0 3px rgb(var(--primary) / 0.12),
             0 4px 14px -8px rgb(var(--primary) / 0.30);
         }
-        .rb-card-title { font-weight: 600; font-size: 13px; line-height: 1.4; margin-bottom: 6px; color: rgb(var(--gray-900)); }
+        .rb-card-title {
+          font-weight: 600; font-size: 13px; line-height: 1.4; margin-bottom: 6px;
+          color: rgb(var(--gray-900));
+          display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
         .dark .rb-card-title { color: rgb(var(--gray-100)); }
         .rb-card-date { font-size: 12px; margin-bottom: 10px; color: rgb(var(--gray-500)); }
         .dark .rb-card-date { color: rgb(var(--gray-400)); }
         .rb-card-foot { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+        .rb-card-comments { font-size: 11px; color: rgb(var(--gray-500)); font-variant-numeric: tabular-nums; }
+        .dark .rb-card-comments { color: rgb(var(--gray-400)); }
         .rb-tag {
           padding: 2px 8px; border-radius: 4px; font-size: 11px;
           background: rgb(var(--gray-100)); color: rgb(var(--gray-600));
@@ -296,6 +450,7 @@ export const RoadmapBoard = ({ data }) => {
         .rb-modal {
           position: relative;
           border-radius: 16px; max-width: 36rem; width: 100%;
+          max-height: 85vh; display: flex; flex-direction: column;
           background: #fff; border: 1px solid rgb(var(--gray-200));
           box-shadow: 0 30px 70px -20px rgb(0 0 0 / 0.4), 0 0 0 1px rgb(0 0 0 / 0.04);
           overflow: hidden;
@@ -330,7 +485,13 @@ export const RoadmapBoard = ({ data }) => {
           pointer-events: none;
         }
 
-        .rb-modal-inner { position: relative; padding: 28px 28px 24px; }
+        .rb-modal-inner { position: relative; padding: 28px 28px 24px; overflow-y: auto; flex: 1; }
+
+        .rb-modal-disqus {
+          margin-top: 24px; padding-top: 20px;
+          border-top: 1px solid rgb(var(--gray-200) / 0.7);
+        }
+        .dark .rb-modal-disqus { border-top-color: rgb(var(--gray-800) / 0.7); }
 
         .rb-modal-top {
           display: flex; align-items: center; justify-content: space-between;
@@ -440,15 +601,16 @@ export const RoadmapBoard = ({ data }) => {
         }
       `}</style>
       <div className="rb-hero">
-        <div className="rb-eyebrow">Roadmap</div>
-        <h1 className="rb-title">Product Roadmap</h1>
-        <p className="rb-subtitle">
-          What we're building across Tenbyte CDN, Cloud, and Vidinfra.
-        </p>
-      </div>
-
-      <div className="rb-toolbar flex flex-wrap gap-1.5">
-        {tagOptions.map(renderChip)}
+        <div className="rb-hero-text">
+          <div className="rb-eyebrow">Roadmap</div>
+          <h1 className="rb-title">Product Roadmap</h1>
+          <p className="rb-subtitle">
+            What we're building across Tenbyte CDN, Cloud, and Vidinfra.
+          </p>
+        </div>
+        <div className="rb-toolbar flex flex-wrap gap-1.5">
+          {tagOptions.map(renderChip)}
+        </div>
       </div>
 
       <div className="rb-board grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
