@@ -4,22 +4,14 @@ export const ROADMAP_DATA = {
     "Cloud",
     "Vidinfra",
     "Webinar",
-    "Managed DNS",
     "Live Stream",
-    "Customer Portal",
+    "Dashboard",
   ],
   columns: {
     planned: [
+    
     {
       id: "p-001",
-      title: "Video Transcoding API",
-      date: "Feb 10th",
-      tag: "Vidinfra",
-      description:
-        "Public API endpoints for triggering transcoding jobs, querying status, and retrieving output URLs programmatically.",
-    },
-    {
-      id: "p-002",
       title: "AI Chapter",
       date: "Mar 3rd",
       tag: "Vidinfra",
@@ -27,7 +19,7 @@ export const ROADMAP_DATA = {
         "Automatically detect scene changes and topic shifts in VOD content to generate navigable chapter markers.",
     },
     {
-      id: "p-003",
+      id: "p-002",
       title: "AI Transcription",
       date: "Mar 17th",
       tag: "Vidinfra",
@@ -35,7 +27,7 @@ export const ROADMAP_DATA = {
         "Speech-to-text transcription for uploaded videos with support for multiple languages and downloadable SRT/VTT files.",
     },
     {
-      id: "p-004",
+      id: "p-003",
       title: "Encoder Queue Management",
       date: "Apr 7th",
       tag: "Vidinfra",
@@ -43,7 +35,7 @@ export const ROADMAP_DATA = {
         "Dashboard view to monitor, prioritize, pause, and cancel active encoding jobs across the account.",
     },
     {
-      id: "p-005",
+      id: "p-004",
       title: "Vertical Video Support & follow uploaded dimension",
       date: "Apr 22nd",
       tag: "Vidinfra",
@@ -51,18 +43,18 @@ export const ROADMAP_DATA = {
         "Preserve 9:16 and other portrait aspect ratios through the transcoding pipeline instead of forcing 16:9 output.",
     },
     {
-      id: "p-006",
+      id: "p-005",
       title: "Billing System",
       date: "Feb 15th",
-      tag: "Customer Portal",
+      tag: "Dashboard",
       description:
         "Unified billing infrastructure supporting multiple payment cycles, invoice generation, and usage-based charges across all products.",
     },
     {
-      id: "p-007",
+      id: "p-006",
       title: "Razorpay Curlec PG Integration",
       date: "Mar 5th",
-      tag: "Customer Portal",
+      tag: "Dashboard",
       description:
         "Integrate Razorpay's Curlec payment gateway to support recurring payments and local payment methods for SEA customers.",
     },
@@ -124,49 +116,42 @@ export const ROADMAP_DATA = {
       description:
         "Simultaneously restream to multiple RTMP endpoints (YouTube, Twitch, custom) from a single ingest point.",
     },
+    
     {
       id: "ip-008",
-      title: "WEB-RQ-15 Screen Share Close Icon Button",
+      title: "Camera & Mic View",
       date: "Feb 1st",
       tag: "Webinar",
       description:
-        "Add a clearly visible stop button on the screen share overlay so presenters can end sharing without navigating away.",
+        "Both on stage joiner and host should have a view option to see the status of their camera and mic (on/off) in the Participant section.",
     },
     {
       id: "ip-009",
-      title: "WEB-RQ-02 Camera & Mic View",
-      date: "Feb 1st",
-      tag: "Webinar",
-      description:
-        "Show a persistent self-preview thumbnail with mic level indicator during active sessions for host and co-hosts.",
-    },
-    {
-      id: "ip-010",
-      title: "WEB-RQ-03 Recording Options",
+      title: "Recording Options",
       date: "Feb 14th",
       tag: "Webinar",
       description:
-        "Let hosts choose recording layout (gallery, speaker, screen-only) and select whether to include chat and audio before starting.",
+        "Two recording modes:\n1. Record Default – Users can choose to record or not; record button visible in live.\n2. Auto Recording – Recording starts automatically when live starts; record button visible.",
     },
     {
-      id: "ip-011",
-      title: "[REQ-WEB-01] Host must assign co-host before leaving a live session",
+      id: "ip-010",
+      title: "Host must assign co-host before leaving a live session",
       date: "Feb 20th",
       tag: "Webinar",
       description:
         "Prevent hosts from exiting a live session without first promoting another participant to co-host to avoid unmoderated rooms.",
     },
     {
-      id: "ip-012",
+      id: "ip-011",
       title: "Partner Program (Partner + Reseller)",
       date: "Jan 10th",
-      tag: "Customer Portal",
+      tag: "Dashboard",
       description:
         "Tiered partner portal supporting both referral partners and white-label resellers with separate dashboards, commission tracking, and sub-account management.",
     },
   
     {
-      id: "ip-013",
+      id: "ip-012",
       title: "Picture-in-Picture Mode",
       date: "Mar 1st",
       tag: "Webinar",
@@ -174,7 +159,7 @@ export const ROADMAP_DATA = {
         "Float the active speaker video in a resizable overlay so attendees can follow along while viewing shared content full-screen.",
     },
     {
-      id: "ip-014",
+      id: "ip-013",
       title: "Fullscreen Mode",
       date: "Mar 1st",
       tag: "Webinar",
@@ -182,23 +167,16 @@ export const ROADMAP_DATA = {
         "One-click fullscreen for the main stage video, removing all UI chrome for immersive viewing on large displays.",
     },
     {
-      id: "ip-015",
+      id: "ip-014",
       title: "Logo upload option",
       date: "Mar 8th",
       tag: "Webinar",
       description:
         "Allow hosts to upload a brand logo displayed in the waiting room, session header, and recording watermark.",
     },
+    
     {
-      id: "ip-016",
-      title: "Double click for fullscreen",
-      date: "Mar 8th",
-      tag: "Webinar",
-      description:
-        "Double-clicking any participant tile or the main stage area enters fullscreen — consistent with common video app conventions.",
-    },
-    {
-      id: "ip-017",
+      id: "ip-015",
       title: "Pin Users",
       date: "Mar 15th",
       tag: "Webinar",
@@ -206,23 +184,16 @@ export const ROADMAP_DATA = {
         "Hosts and co-hosts can pin a specific participant's video to the main stage regardless of who is currently speaking.",
     },
     {
-      id: "ip-018",
+      id: "ip-016",
       title: "File Sharing in the chat",
       date: "Mar 15th",
       tag: "Webinar",
       description:
         "Allow participants to upload and share files (PDF, images, ZIP) directly in the session chat panel with size limits enforced.",
     },
+    
     {
-      id: "ip-019",
-      title: "Pop-up view join request should be on a side",
-      date: "Mar 22nd",
-      tag: "Webinar",
-      description:
-        "Move the join-request notification from a center modal to a side panel so it doesn't interrupt the host's view of content.",
-    },
-    {
-      id: "ip-020",
+      id: "ip-017",
       title: "Max MBPS Restriction (RTMP mode)",
       date: "Mar 22nd",
       tag: "Webinar",
