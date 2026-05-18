@@ -87,13 +87,11 @@ export const RoadmapBoard = ({ data }) => {
         data-status={activeTask._status}
       >
         <div className="rb-modal-inner">
-          <div className="rb-modal-status">
-            <span className="rb-modal-status-dot" />
-            {activeTask._statusLabel}
-          </div>
-
-          <div className="rb-modal-head">
-            <h2 id="rb-modal-title">{activeTask.title}</h2>
+          <div className="rb-modal-top">
+            <div className="rb-modal-status">
+              <span className="rb-modal-status-dot" />
+              {activeTask._statusLabel}
+            </div>
             <button
               onClick={() => setActiveTask(null)}
               className="rb-close"
@@ -101,6 +99,10 @@ export const RoadmapBoard = ({ data }) => {
             >
               ×
             </button>
+          </div>
+
+          <div className="rb-modal-head">
+            <h2 id="rb-modal-title">{activeTask.title}</h2>
           </div>
 
           <div className="rb-modal-meta">
@@ -330,20 +332,23 @@ export const RoadmapBoard = ({ data }) => {
 
         .rb-modal-inner { position: relative; padding: 28px 28px 24px; }
 
+        .rb-modal-top {
+          display: flex; align-items: center; justify-content: space-between;
+          gap: 16px; margin-bottom: 14px;
+        }
         .rb-modal-status {
           display: inline-flex; align-items: center; gap: 6px;
           padding: 4px 10px 4px 8px; border-radius: 999px;
           background: var(--rb-accent-soft);
           color: var(--rb-accent);
           font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
-          margin-bottom: 14px;
         }
         .rb-modal-status-dot {
           width: 6px; height: 6px; border-radius: 50%; background: var(--rb-accent);
           box-shadow: 0 0 0 3px var(--rb-accent-soft);
         }
 
-        .rb-modal-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+        .rb-modal-head { margin-bottom: 14px; }
         .rb-modal h2 {
           margin: 0; font-size: 22px; font-weight: 700; line-height: 1.25;
           letter-spacing: -0.015em;
@@ -364,15 +369,10 @@ export const RoadmapBoard = ({ data }) => {
           color: rgb(var(--gray-400));
         }
         .rb-close:hover {
-          color: rgb(var(--gray-900));
           background: rgb(var(--gray-200));
-          border-color: rgb(var(--gray-300));
-          transform: rotate(90deg);
         }
         .dark .rb-close:hover {
-          color: rgb(var(--gray-100));
           background: rgb(var(--gray-700));
-          border-color: rgb(var(--gray-600));
         }
 
         .rb-modal-meta {
