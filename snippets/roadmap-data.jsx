@@ -54,7 +54,7 @@ export const ROADMAP_DATA = {
       id: "p-006",
       title: "Billing System",
       date: "Feb 15th",
-      tag: "Platform",
+      tag: "Customer Portal",
       description:
         "Unified billing infrastructure supporting multiple payment cycles, invoice generation, and usage-based charges across all products.",
     },
@@ -62,7 +62,7 @@ export const ROADMAP_DATA = {
       id: "p-007",
       title: "Razorpay Curlec PG Integration",
       date: "Mar 5th",
-      tag: "Platform",
+      tag: "Customer Portal",
       description:
         "Integrate Razorpay's Curlec payment gateway to support recurring payments and local payment methods for SEA customers.",
     },
@@ -160,7 +160,7 @@ export const ROADMAP_DATA = {
       id: "ip-012",
       title: "Partner Program (Partner + Reseller)",
       date: "Jan 10th",
-      tag: "Platform",
+      tag: "Customer Portal",
       description:
         "Tiered partner portal supporting both referral partners and white-label resellers with separate dashboards, commission tracking, and sub-account management.",
     },
