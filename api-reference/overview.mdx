@@ -27,10 +27,11 @@ Each service has its own subpath:
 | **Cloud** | `/cloud` | `https://api.tenbyte.io/v1/cloud/instances` |
 
 
+---
 ## 🔐 Authentication
 
-Tenbyte APIs use **Bearer Token Authentication** to authorize requests.
-Every API call must include an `Authorization` header containing your API key.
+Tenbyte APIs use **API Key Authentication** to authorize requests.
+Every API call must include an `x-api-key` header containing your API key.
 
 You can generate and manage API keys in your **Tenbyte Console → Organization → API Keys**.
 
@@ -38,12 +39,13 @@ You can generate and manage API keys in your **Tenbyte Console → Organization 
 
 ### 🪪 Example Authorization Header
 
+
 ```bash
--H "Authorization: Bearer YOUR_API_KEY"
+-H "x-api-key: YOUR_API_KEY"
 ```
 ```bash
 curl -X GET https://api.tenbyte.io/v1/cdn/distributions \
-  -H "Authorization: Bearer sk_live_1234567890abcdef"
+  -H "x-api-key: YOUR_API_KEY"
 ```
 
 ### 🧱 Authentication Errors
@@ -82,5 +84,5 @@ Use query parameters to control the number of items per page and navigate betwee
 
 ```bash
 GET https://api.tenbyte.io/v1/libraries?limit=20&page=1 \
-  -H "Authorization: Bearer $TENBYTE_API_KEY"
+  -H "x-api-key: TENBYTE_API_KEY"
 ```
