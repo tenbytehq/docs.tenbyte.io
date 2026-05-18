@@ -9,14 +9,25 @@ export const RoadmapBoard = ({ data }) => {
   const disqusId = (id) => "rb-v2-" + id;
 
   useEffect(() => {
-    if (typeof document === "undefined") return;
+    if (typeof window === "undefined") return;
+    const mql = window.matchMedia("(min-width: 1024px)");
     const html = document.documentElement;
     const body = document.body;
     const prevHtml = html.style.overflow;
     const prevBody = body.style.overflow;
-    html.style.overflow = "hidden";
-    body.style.overflow = "hidden";
+    const apply = () => {
+      if (mql.matches) {
+        html.style.overflow = "hidden";
+        body.style.overflow = "hidden";
+      } else {
+        html.style.overflow = prevHtml;
+        body.style.overflow = prevBody;
+      }
+    };
+    apply();
+    mql.addEventListener("change", apply);
     return () => {
+      mql.removeEventListener("change", apply);
       html.style.overflow = prevHtml;
       body.style.overflow = prevBody;
     };
@@ -290,6 +301,12 @@ export const RoadmapBoard = ({ data }) => {
           display: flex; flex-direction: column;
           overflow: hidden;
         }
+        @media (max-width: 1023px) {
+          .rb-root {
+            height: auto; padding-bottom: 0;
+            overflow: visible;
+          }
+        }
         .dark .rb-root { color: rgb(var(--gray-100)); }
 
         .rb-hero {
@@ -380,8 +397,8 @@ export const RoadmapBoard = ({ data }) => {
           scrollbar-width: none; -ms-overflow-style: none;
         }
         .rb-card-list::-webkit-scrollbar { width: 0; height: 0; display: none; }
-        @media (max-width: 767px) {
-          .rb-card-list { max-height: none; overflow: visible; padding-right: 0; }
+        @media (max-width: 1023px) {
+          .rb-card-list { max-height: none; overflow: visible; padding-right: 0; flex: none; }
         }
         .rb-card {
           text-align: left; width: 100%;
