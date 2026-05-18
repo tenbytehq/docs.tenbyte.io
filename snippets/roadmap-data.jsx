@@ -1,0 +1,301 @@
+export const ROADMAP_DATA = {
+  tags: [
+    "CDN",
+    "Cloud",
+    "Vidinfra",
+    "Webinar",
+    "Managed DNS",
+    "Live Stream",
+    "Customer Portal",
+  ],
+  columns: {
+    planned: [
+    {
+      id: "p-001",
+      title: "Video Transcoding API",
+      date: "Feb 10th",
+      tag: "Vidinfra",
+      description:
+        "Public API endpoints for triggering transcoding jobs, querying status, and retrieving output URLs programmatically.",
+    },
+    {
+      id: "p-002",
+      title: "AI Chapter",
+      date: "Mar 3rd",
+      tag: "Vidinfra",
+      description:
+        "Automatically detect scene changes and topic shifts in VOD content to generate navigable chapter markers.",
+    },
+    {
+      id: "p-003",
+      title: "AI Transcription",
+      date: "Mar 17th",
+      tag: "Vidinfra",
+      description:
+        "Speech-to-text transcription for uploaded videos with support for multiple languages and downloadable SRT/VTT files.",
+    },
+    {
+      id: "p-004",
+      title: "Encoder Queue Management",
+      date: "Apr 7th",
+      tag: "Vidinfra",
+      description:
+        "Dashboard view to monitor, prioritize, pause, and cancel active encoding jobs across the account.",
+    },
+    {
+      id: "p-005",
+      title: "Vertical Video Support & follow uploaded dimension",
+      date: "Apr 22nd",
+      tag: "Vidinfra",
+      description:
+        "Preserve 9:16 and other portrait aspect ratios through the transcoding pipeline instead of forcing 16:9 output.",
+    },
+    {
+      id: "p-006",
+      title: "Billing System",
+      date: "Feb 15th",
+      tag: "Customer Portal",
+      description:
+        "Unified billing infrastructure supporting multiple payment cycles, invoice generation, and usage-based charges across all products.",
+    },
+    {
+      id: "p-007",
+      title: "Razorpay Curlec PG Integration",
+      date: "Mar 5th",
+      tag: "Customer Portal",
+      description:
+        "Integrate Razorpay's Curlec payment gateway to support recurring payments and local payment methods for SEA customers.",
+    },
+  ],
+  inProgress: [
+    {
+      id: "ip-001",
+      title: "Multi WAAP",
+      date: "Jan 15th",
+      tag: "CDN",
+      description:
+        "Apply multiple Web Application and API Protection rule sets per pull zone with independent enable/disable toggles.",
+    },
+    {
+      id: "ip-002",
+      title: "Unified Log Management",
+      date: "Jan 28th",
+      tag: "CDN",
+      description:
+        "Centralized log aggregation across all CDN zones with real-time streaming, filtering, and S3/HTTP export options.",
+    },
+    {
+      id: "ip-003",
+      title: "SSL Auto Renew, Monitoring, Admin Notification + User Notification if self uploaded SSL",
+      date: "Feb 5th",
+      tag: "CDN",
+      description:
+        "Automatic renewal for managed certificates and expiry alerts for custom-uploaded SSL certs sent to both admins and end users.",
+    },
+    {
+      id: "ip-004",
+      title: "Stream to Vidinfra",
+      date: "Dec 23rd",
+      tag: "Vidinfra",
+      description:
+        "Push RTMP/SRT live streams directly into the Vidinfra pipeline for transcoding, recording, and VOD packaging in one flow.",
+    },
+    {
+      id: "ip-005",
+      title: "Video Analytics",
+      date: "Dec 23rd",
+      tag: "Vidinfra",
+      description:
+        "Per-video play counts, watch-time heatmaps, drop-off rates, and geographic breakdowns available in the customer portal.",
+    },
+    {
+      id: "ip-006",
+      title: "LiveStream Recording to Vidinfra Library or S3",
+      date: "Jan 9th",
+      tag: "Live Stream",
+      description:
+        "Automatically save live broadcast recordings to the Vidinfra VOD library or a customer-owned S3 bucket at end of stream.",
+    },
+    {
+      id: "ip-007",
+      title: "Live Multi Destination",
+      date: "Jan 20th",
+      tag: "Live Stream",
+      description:
+        "Simultaneously restream to multiple RTMP endpoints (YouTube, Twitch, custom) from a single ingest point.",
+    },
+    {
+      id: "ip-008",
+      title: "WEB-RQ-15 Screen Share Close Icon Button",
+      date: "Feb 1st",
+      tag: "Webinar",
+      description:
+        "Add a clearly visible stop button on the screen share overlay so presenters can end sharing without navigating away.",
+    },
+    {
+      id: "ip-009",
+      title: "WEB-RQ-02 Camera & Mic View",
+      date: "Feb 1st",
+      tag: "Webinar",
+      description:
+        "Show a persistent self-preview thumbnail with mic level indicator during active sessions for host and co-hosts.",
+    },
+    {
+      id: "ip-010",
+      title: "WEB-RQ-03 Recording Options",
+      date: "Feb 14th",
+      tag: "Webinar",
+      description:
+        "Let hosts choose recording layout (gallery, speaker, screen-only) and select whether to include chat and audio before starting.",
+    },
+    {
+      id: "ip-011",
+      title: "[REQ-WEB-01] Host must assign co-host before leaving a live session",
+      date: "Feb 20th",
+      tag: "Webinar",
+      description:
+        "Prevent hosts from exiting a live session without first promoting another participant to co-host to avoid unmoderated rooms.",
+    },
+    {
+      id: "ip-012",
+      title: "Partner Program (Partner + Reseller)",
+      date: "Jan 10th",
+      tag: "Customer Portal",
+      description:
+        "Tiered partner portal supporting both referral partners and white-label resellers with separate dashboards, commission tracking, and sub-account management.",
+    },
+  
+    {
+      id: "ip-013",
+      title: "Picture-in-Picture Mode",
+      date: "Mar 1st",
+      tag: "Webinar",
+      description:
+        "Float the active speaker video in a resizable overlay so attendees can follow along while viewing shared content full-screen.",
+    },
+    {
+      id: "ip-014",
+      title: "Fullscreen Mode",
+      date: "Mar 1st",
+      tag: "Webinar",
+      description:
+        "One-click fullscreen for the main stage video, removing all UI chrome for immersive viewing on large displays.",
+    },
+    {
+      id: "ip-015",
+      title: "Logo upload option",
+      date: "Mar 8th",
+      tag: "Webinar",
+      description:
+        "Allow hosts to upload a brand logo displayed in the waiting room, session header, and recording watermark.",
+    },
+    {
+      id: "ip-016",
+      title: "Double click for fullscreen",
+      date: "Mar 8th",
+      tag: "Webinar",
+      description:
+        "Double-clicking any participant tile or the main stage area enters fullscreen — consistent with common video app conventions.",
+    },
+    {
+      id: "ip-017",
+      title: "Pin Users",
+      date: "Mar 15th",
+      tag: "Webinar",
+      description:
+        "Hosts and co-hosts can pin a specific participant's video to the main stage regardless of who is currently speaking.",
+    },
+    {
+      id: "ip-018",
+      title: "File Sharing in the chat",
+      date: "Mar 15th",
+      tag: "Webinar",
+      description:
+        "Allow participants to upload and share files (PDF, images, ZIP) directly in the session chat panel with size limits enforced.",
+    },
+    {
+      id: "ip-019",
+      title: "Pop-up view join request should be on a side",
+      date: "Mar 22nd",
+      tag: "Webinar",
+      description:
+        "Move the join-request notification from a center modal to a side panel so it doesn't interrupt the host's view of content.",
+    },
+    {
+      id: "ip-020",
+      title: "Max MBPS Restriction (RTMP mode)",
+      date: "Mar 22nd",
+      tag: "Webinar",
+      description:
+        "Let admins cap the ingest bitrate per RTMP session to prevent a single broadcaster from saturating shared bandwidth.",
+    },
+  ],
+  released: [
+  {
+    id: "r-cdn-001",
+    title: "BUG: Gcore HTTP3 not working",
+    date: "Apr 2nd",
+    tag: "CDN",
+    description:
+      "Resolved an edge case where HTTP/3 connections were silently falling back to HTTP/1.1 on certain PoPs due to a misconfigured QUIC listener.",
+  },
+  {
+    id: "r-cdn-002",
+    title: "HTT2 & HTTP3 can be enabled together",
+    date: "Apr 18th",
+    tag: "CDN",
+    description:
+      "Removed the mutual exclusion between HTTP/2 and HTTP/3 — both protocols can now be enabled simultaneously per pull zone for maximum client compatibility.",
+  },
+  {
+    id: "r-cdn-003",
+    title: "RUM Data Sourcing",
+    date: "May 10th",
+    tag: "CDN",
+    description:
+      "Real User Monitoring data is now sourced directly from edge telemetry, giving more accurate TTFB, FCP, and LCP metrics per region.",
+  },
+  {
+    id: "ls-001",
+    title: "Live Push-Pull Features",
+    date: "May 10th",
+    tag: "CDN",
+    description:
+      "Real User Monitoring data is now sourced directly from edge telemetry, giving more accurate TTFB, FCP, and LCP metrics per region.",
+  },
+  {
+  id: "r-web-001",
+  title: "Network Health Indicator",
+  date: "Apr 5th",
+  tag: "Webinar",
+  description:
+    "Display a real-time connection quality indicator for each participant so hosts can identify attendees with poor network conditions during a session.",
+  },
+  {
+    id: "r-web-002",
+    title: "Rejoin Button",
+    date: "Apr 12th",
+    tag: "Webinar",
+    description:
+      "Add a one-click rejoin button on the post-session screen so participants can quickly re-enter a room if they accidentally disconnected.",
+  },
+  {
+    id: "r-web-003",
+    title: "Active speaker highlight & profile card for webinar",
+    date: "Apr 20th",
+    tag: "Webinar",
+    description:
+      "Highlight the currently speaking participant's tile with a visual border and show a profile card with their name and role on hover.",
+  },
+  {
+    id: "r-web-004",
+    title: "Host Mute All",
+    date: "Apr 28th",
+    tag: "Webinar",
+    description:
+      "Allow hosts to mute all participants simultaneously with a single action, with an optional setting to prevent attendees from unmuting themselves.",
+  },
+  ],
+
+  },
+};
