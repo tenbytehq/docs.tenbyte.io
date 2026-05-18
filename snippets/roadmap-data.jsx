@@ -3,303 +3,299 @@ export const ROADMAP_DATA = {
     "CDN",
     "Cloud",
     "Vidinfra",
+    "Webinar",
     "Managed DNS",
-    "Streaming",
+    "Live Stream",
     "Customer Portal",
   ],
   columns: {
     planned: [
-      {
-        id: "p-001",
-        title: "Support Brotli for every cached resource",
-        date: "Dec 23rd",
-        tag: "CDN",
-        description:
-          "Enable Brotli compression across all cached resources, not just origin responses. Should improve transfer sizes by ~15-20% over gzip for text-based assets.",
-      },
-      {
-        id: "p-002",
-        title: "IPv6 as source",
-        date: "Dec 23rd",
-        tag: "CDN",
-        description:
-          "Allow customers to configure IPv6 origins for pull zones. Currently only IPv4 origins are supported.",
-      },
-      {
-        id: "p-003",
-        title: "Advanced Monitoring Service",
-        date: "Dec 23rd",
-        tag: "Cloud",
-        description:
-          "Deeper VM-level metrics, custom alerts, and integrations with Grafana/Prometheus.",
-      },
-      {
-        id: "p-004",
-        title: "Site-to-Site VPN",
-        date: "Dec 23rd",
-        tag: "Cloud",
-        description:
-          "Connect your on-prem infrastructure to Tenbyte Cloud VPC via IPsec tunnel.",
-      },
-      {
-        id: "p-005",
-        title: "URL Redirect DNS record",
-        date: "Nov 16th",
-        tag: "Managed DNS",
-        description:
-          "Add a DNS record type that performs HTTP 301/302 redirects without needing an origin server.",
-      },
-      {
-        id: "p-006",
-        title: "Custom ingest domains",
-        date: "May 16th",
-        tag: "Streaming",
-        description:
-          "Use your own domain (e.g. ingest.yourbrand.com) for RTMP/SRT push instead of the default Tenbyte ingest URL.",
-      },
-      {
-        id: "p-007",
-        title: "Bring Your Own IP (BYOIP)",
-        date: "Jan 14th",
-        tag: "Cloud",
-        description:
-          "Announce your own IPv4/IPv6 prefixes from Tenbyte edge for reputation continuity.",
-      },
-      {
-        id: "p-008",
-        title: "GraphQL caching at the edge",
-        date: "Feb 2nd",
-        tag: "CDN",
-        description:
-          "Parse GraphQL POST bodies and cache responses by query hash with per-field TTLs.",
-      },
-      {
-        id: "p-009",
-        title: "Live transcoding presets",
-        date: "Mar 10th",
-        tag: "Vidinfra",
-        description:
-          "Saved ABR ladders per channel — pick once, reuse across all streams.",
-      },
-      {
-        id: "p-010",
-        title: "Two-factor for sub-accounts",
-        date: "Apr 1st",
-        tag: "Customer Portal",
-        description:
-          "Enforce TOTP/WebAuthn on reseller sub-accounts from the parent dashboard.",
-      },
-      {
-        id: "p-011",
-        title: "Terraform provider v2",
-        date: "Apr 18th",
-        tag: "Cloud",
-        description:
-          "Rewrite using Terraform Plugin Framework — proper plan diffs for nested blocks and import support.",
-      },
-      {
-        id: "p-012",
-        title: "ANAME flattening",
-        date: "May 5th",
-        tag: "Managed DNS",
-        description:
-          "Resolve ALIAS/ANAME records to A/AAAA at query time for apex CNAME-like behavior.",
-      },
-    ],
-    inProgress: [
-      {
-        id: "ip-001",
-        title: "Support for HTTP/3",
-        date: "Dec 23rd → Jun 30th",
-        tag: "CDN",
-        description:
-          "HTTP/3 (QUIC) support at all 210+ edge locations. Currently rolling out region by region.",
-      },
-      {
-        id: "ip-002",
-        title: "Pay With Crypto",
-        date: "Feb 8th",
-        tag: "Cloud",
-        description:
-          "Accept USDT, USDC, and BTC for invoice payments. Launching with Tenbyte Cloud first, then CDN.",
-      },
-      {
-        id: "ip-003",
-        title: "Instant config propagation",
-        date: "Mar 22nd → Dec 15th",
-        tag: "CDN",
-        description:
-          "Push config changes to all 210+ PoPs in under 5 seconds instead of the current 60s window.",
-      },
-      {
-        id: "ip-004",
-        title: "Let's Encrypt wildcard certificate support",
-        date: "Dec 23rd",
-        tag: "CDN",
-        description:
-          "Auto-provision wildcard SSL certificates via Let's Encrypt DNS-01 challenge for pull zones.",
-      },
-      {
-        id: "ip-005",
-        title: "Customer Portal redesign",
-        date: "Sep 4th",
-        tag: "Customer Portal",
-        description:
-          "New dashboard, faster navigation, unified billing across CDN/Cloud/Vidinfra.",
-      },
-      {
-        id: "ip-006",
-        title: "Permanent API tokens for resellers",
-        date: "Aug 30th",
-        tag: "CDN",
-        description:
-          "Non-expiring API tokens scoped to reseller sub-accounts for white-label automation.",
-      },
-      {
-        id: "ip-007",
-        title: "Edge image optimization",
-        date: "Jan 20th → Jul 1st",
-        tag: "CDN",
-        description:
-          "On-the-fly resize, format conversion (AVIF/WebP), and quality tuning via URL params.",
-      },
-      {
-        id: "ip-008",
-        title: "Object Storage S3 compatibility",
-        date: "Feb 14th",
-        tag: "Cloud",
-        description:
-          "Full S3 API surface (multipart, versioning, lifecycle) on Tenbyte Object Storage.",
-      },
-      {
-        id: "ip-009",
-        title: "Low-latency HLS (LL-HLS)",
-        date: "Mar 5th → Sep 1st",
-        tag: "Vidinfra",
-        description:
-          "Sub-3s glass-to-glass latency with partial segments and preload hints.",
-      },
-      {
-        id: "ip-010",
-        title: "GeoBlocking by ASN",
-        date: "Apr 12th",
-        tag: "CDN",
-        description:
-          "Block or allow traffic by autonomous system number — finer-grained than country rules.",
-      },
-      {
-        id: "ip-011",
-        title: "Webhooks for DNS changes",
-        date: "May 22nd",
-        tag: "Managed DNS",
-        description:
-          "POST audit events (record create/update/delete) to your endpoint for SIEM ingestion.",
-      },
-      {
-        id: "ip-012",
-        title: "Usage-based billing exports",
-        date: "Jun 8th",
-        tag: "Customer Portal",
-        description:
-          "CSV/Parquet exports of per-resource hourly usage for chargeback reporting.",
-      },
-    ],
-    released: [
-      {
-        id: "r-001",
-        title: "CSS and JS minification/compression",
-        date: "Dec 23rd",
-        tag: "CDN",
-        description:
-          "Automatic minification of CSS and JS at the edge. Toggle per pull zone in the dashboard.",
-      },
-      {
-        id: "r-002",
-        title: "DNSSEC",
-        date: "Nov 16th",
-        tag: "Managed DNS",
-        description:
-          "DNSSEC signing for all zones hosted on Tenbyte Managed DNS. One-click enable.",
-      },
-      {
-        id: "r-003",
-        title: "Database as a Service",
-        date: "Dec 23rd",
-        tag: "Cloud",
-        description:
-          "Managed MySQL and PostgreSQL with automated backups, read replicas, and point-in-time recovery.",
-      },
-      {
-        id: "r-004",
-        title: "Host header based on origin",
-        date: "Dec 23rd",
-        tag: "CDN",
-        description:
-          "Override the Host header sent to origin per pull zone — useful for shared hosting backends.",
-      },
-      {
-        id: "r-005",
-        title: "DNS Failover",
-        date: "Nov 16th",
-        tag: "Managed DNS",
-        description:
-          "Health-checked DNS records that automatically remove unhealthy IPs from rotation.",
-      },
-      {
-        id: "r-006",
-        title: "New locations in Armenia and Finland",
-        date: "Aug 6th",
-        tag: "Cloud",
-        description:
-          "Two new Tenbyte Cloud regions: Yerevan (AM) and Helsinki (FI). Available in the dashboard now.",
-      },
-      {
-        id: "r-007",
-        title: "Origin Shield",
-        date: "Jul 19th",
-        tag: "CDN",
-        description:
-          "Single super-PoP in front of origin to collapse cache-miss traffic — typical 70% offload boost.",
-      },
-      {
-        id: "r-008",
-        title: "Per-zone WAF rules",
-        date: "Jun 30th",
-        tag: "CDN",
-        description:
-          "Custom rule sets per pull zone with shared rule templates across the account.",
-      },
-      {
-        id: "r-009",
-        title: "Multi-region snapshots",
-        date: "May 12th",
-        tag: "Cloud",
-        description:
-          "Replicate VM snapshots across regions for cross-region restore and DR drills.",
-      },
-      {
-        id: "r-010",
-        title: "Studio recording → VOD",
-        date: "Apr 3rd",
-        tag: "Vidinfra",
-        description:
-          "Auto-package live stream recordings into HLS VOD assets at end of broadcast.",
-      },
-      {
-        id: "r-011",
-        title: "Bulk DNS import (BIND zone files)",
-        date: "Mar 11th",
-        tag: "Managed DNS",
-        description:
-          "Drop a zone file in the dashboard to import hundreds of records in one shot.",
-      },
-      {
-        id: "r-012",
-        title: "Dark mode for portal",
-        date: "Feb 20th",
-        tag: "Customer Portal",
-        description: "System-pref-aware dark theme across all dashboard views.",
-      },
-    ],
+    {
+      id: "p-001",
+      title: "Video Transcoding API",
+      date: "Feb 10th",
+      tag: "Vidinfra",
+      description:
+        "Public API endpoints for triggering transcoding jobs, querying status, and retrieving output URLs programmatically.",
+    },
+    {
+      id: "p-002",
+      title: "AI Chapter",
+      date: "Mar 3rd",
+      tag: "Vidinfra",
+      description:
+        "Automatically detect scene changes and topic shifts in VOD content to generate navigable chapter markers.",
+    },
+    {
+      id: "p-003",
+      title: "AI Transcription",
+      date: "Mar 17th",
+      tag: "Vidinfra",
+      description:
+        "Speech-to-text transcription for uploaded videos with support for multiple languages and downloadable SRT/VTT files.",
+    },
+    {
+      id: "p-004",
+      title: "Encoder Queue Management",
+      date: "Apr 7th",
+      tag: "Vidinfra",
+      description:
+        "Dashboard view to monitor, prioritize, pause, and cancel active encoding jobs across the account.",
+    },
+    {
+      id: "p-005",
+      title: "Vertical Video Support & follow uploaded dimension",
+      date: "Apr 22nd",
+      tag: "Vidinfra",
+      description:
+        "Preserve 9:16 and other portrait aspect ratios through the transcoding pipeline instead of forcing 16:9 output.",
+    },
+    {
+      id: "p-006",
+      title: "Billing System",
+      date: "Feb 15th",
+      tag: "Platform",
+      description:
+        "Unified billing infrastructure supporting multiple payment cycles, invoice generation, and usage-based charges across all products.",
+    },
+    {
+      id: "p-007",
+      title: "Razorpay Curlec PG Integration",
+      date: "Mar 5th",
+      tag: "Platform",
+      description:
+        "Integrate Razorpay's Curlec payment gateway to support recurring payments and local payment methods for SEA customers.",
+    },
+  ],
+  inProgress: [
+    {
+      id: "ip-001",
+      title: "Multi WAAP",
+      date: "Jan 15th",
+      tag: "CDN",
+      description:
+        "Apply multiple Web Application and API Protection rule sets per pull zone with independent enable/disable toggles.",
+    },
+    {
+      id: "ip-002",
+      title: "Unified Log Management",
+      date: "Jan 28th",
+      tag: "CDN",
+      description:
+        "Centralized log aggregation across all CDN zones with real-time streaming, filtering, and S3/HTTP export options.",
+    },
+    {
+      id: "ip-003",
+      title: "SSL Auto Renew, Monitoring, Admin Notification + User Notification if self uploaded SSL",
+      date: "Feb 5th",
+      tag: "CDN",
+      description:
+        "Automatic renewal for managed certificates and expiry alerts for custom-uploaded SSL certs sent to both admins and end users.",
+    },
+    {
+      id: "ip-004",
+      title: "Stream to Vidinfra",
+      date: "Dec 23rd",
+      tag: "Vidinfra",
+      description:
+        "Push RTMP/SRT live streams directly into the Vidinfra pipeline for transcoding, recording, and VOD packaging in one flow.",
+    },
+    {
+      id: "ip-005",
+      title: "Video Analytics",
+      date: "Dec 23rd",
+      tag: "Vidinfra",
+      description:
+        "Per-video play counts, watch-time heatmaps, drop-off rates, and geographic breakdowns available in the customer portal.",
+    },
+    {
+      id: "ip-006",
+      title: "LiveStream Recording to Vidinfra Library or S3",
+      date: "Jan 9th",
+      tag: "Live Stream",
+      description:
+        "Automatically save live broadcast recordings to the Vidinfra VOD library or a customer-owned S3 bucket at end of stream.",
+    },
+    {
+      id: "ip-007",
+      title: "Live Multi Destination",
+      date: "Jan 20th",
+      tag: "Live Stream",
+      description:
+        "Simultaneously restream to multiple RTMP endpoints (YouTube, Twitch, custom) from a single ingest point.",
+    },
+    {
+      id: "ip-008",
+      title: "WEB-RQ-15 Screen Share Close Icon Button",
+      date: "Feb 1st",
+      tag: "Webinar",
+      description:
+        "Add a clearly visible stop button on the screen share overlay so presenters can end sharing without navigating away.",
+    },
+    {
+      id: "ip-009",
+      title: "WEB-RQ-02 Camera & Mic View",
+      date: "Feb 1st",
+      tag: "Webinar",
+      description:
+        "Show a persistent self-preview thumbnail with mic level indicator during active sessions for host and co-hosts.",
+    },
+    {
+      id: "ip-010",
+      title: "WEB-RQ-03 Recording Options",
+      date: "Feb 14th",
+      tag: "Webinar",
+      description:
+        "Let hosts choose recording layout (gallery, speaker, screen-only) and select whether to include chat and audio before starting.",
+    },
+    {
+      id: "ip-011",
+      title: "[REQ-WEB-01] Host must assign co-host before leaving a live session",
+      date: "Feb 20th",
+      tag: "Webinar",
+      description:
+        "Prevent hosts from exiting a live session without first promoting another participant to co-host to avoid unmoderated rooms.",
+    },
+    {
+      id: "ip-012",
+      title: "Partner Program (Partner + Reseller)",
+      date: "Jan 10th",
+      tag: "Platform",
+      description:
+        "Tiered partner portal supporting both referral partners and white-label resellers with separate dashboards, commission tracking, and sub-account management.",
+    },
+  
+    {
+      id: "ip-013",
+      title: "Picture-in-Picture Mode",
+      date: "Mar 1st",
+      tag: "Webinar",
+      description:
+        "Float the active speaker video in a resizable overlay so attendees can follow along while viewing shared content full-screen.",
+    },
+    {
+      id: "ip-014",
+      title: "Fullscreen Mode",
+      date: "Mar 1st",
+      tag: "Webinar",
+      description:
+        "One-click fullscreen for the main stage video, removing all UI chrome for immersive viewing on large displays.",
+    },
+    {
+      id: "ip-015",
+      title: "Logo upload option",
+      date: "Mar 8th",
+      tag: "Webinar",
+      description:
+        "Allow hosts to upload a brand logo displayed in the waiting room, session header, and recording watermark.",
+    },
+    {
+      id: "ip-016",
+      title: "Double click for fullscreen",
+      date: "Mar 8th",
+      tag: "Webinar",
+      description:
+        "Double-clicking any participant tile or the main stage area enters fullscreen — consistent with common video app conventions.",
+    },
+    {
+      id: "ip-017",
+      title: "Pin Users",
+      date: "Mar 15th",
+      tag: "Webinar",
+      description:
+        "Hosts and co-hosts can pin a specific participant's video to the main stage regardless of who is currently speaking.",
+    },
+    {
+      id: "ip-018",
+      title: "File Sharing in the chat",
+      date: "Mar 15th",
+      tag: "Webinar",
+      description:
+        "Allow participants to upload and share files (PDF, images, ZIP) directly in the session chat panel with size limits enforced.",
+    },
+    {
+      id: "ip-019",
+      title: "Pop-up view join request should be on a side",
+      date: "Mar 22nd",
+      tag: "Webinar",
+      description:
+        "Move the join-request notification from a center modal to a side panel so it doesn't interrupt the host's view of content.",
+    },
+    {
+      id: "ip-020",
+      title: "Max MBPS Restriction (RTMP mode)",
+      date: "Mar 22nd",
+      tag: "Webinar",
+      description:
+        "Let admins cap the ingest bitrate per RTMP session to prevent a single broadcaster from saturating shared bandwidth.",
+    },
+  ],
+  released: [
+  {
+    id: "r-cdn-001",
+    title: "BUG: Gcore HTTP3 not working",
+    date: "Apr 2nd",
+    tag: "CDN",
+    description:
+      "Resolved an edge case where HTTP/3 connections were silently falling back to HTTP/1.1 on certain PoPs due to a misconfigured QUIC listener.",
+  },
+  {
+    id: "r-cdn-002",
+    title: "HTT2 & HTTP3 can be enabled together",
+    date: "Apr 18th",
+    tag: "CDN",
+    description:
+      "Removed the mutual exclusion between HTTP/2 and HTTP/3 — both protocols can now be enabled simultaneously per pull zone for maximum client compatibility.",
+  },
+  {
+    id: "r-cdn-003",
+    title: "RUM Data Sourcing",
+    date: "May 10th",
+    tag: "CDN",
+    description:
+      "Real User Monitoring data is now sourced directly from edge telemetry, giving more accurate TTFB, FCP, and LCP metrics per region.",
+  },
+  {
+    id: "ls-001",
+    title: "Live Push-Pull Features",
+    date: "May 10th",
+    tag: "CDN",
+    description:
+      "Real User Monitoring data is now sourced directly from edge telemetry, giving more accurate TTFB, FCP, and LCP metrics per region.",
+  },
+  {
+  id: "r-web-001",
+  title: "Network Health Indicator",
+  date: "Apr 5th",
+  tag: "Webinar",
+  description:
+    "Display a real-time connection quality indicator for each participant so hosts can identify attendees with poor network conditions during a session.",
+  },
+  {
+    id: "r-web-002",
+    title: "Rejoin Button",
+    date: "Apr 12th",
+    tag: "Webinar",
+    description:
+      "Add a one-click rejoin button on the post-session screen so participants can quickly re-enter a room if they accidentally disconnected.",
+  },
+  {
+    id: "r-web-003",
+    title: "Active speaker highlight & profile card for webinar",
+    date: "Apr 20th",
+    tag: "Webinar",
+    description:
+      "Highlight the currently speaking participant's tile with a visual border and show a profile card with their name and role on hover.",
+  },
+  {
+    id: "r-web-004",
+    title: "Host Mute All",
+    date: "Apr 28th",
+    tag: "Webinar",
+    description:
+      "Allow hosts to mute all participants simultaneously with a single action, with an optional setting to prevent attendees from unmuting themselves.",
+  },
+  ],
+
   },
 };
