@@ -434,7 +434,12 @@
       },
       {
         "tab": "Roadmap",
-        "pages": "roadmap"
+        "groups": [
+          {
+            "group": "Roadmap",
+            "pages": ["roadmap"]
+          }
+        ]
       }
     ],
     "global": {
