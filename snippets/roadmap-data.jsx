@@ -53,14 +53,7 @@ export const ROADMAP_DATA = {
     },
   ],
   inProgress: [
-    {
-      id: "ip-003",
-      title: "API key for Access Log",
-      date: "May 20th",
-      tag: "CDN",
-      description:
-        "Introduce API keys for secure access to CDN access logs, allowing customers to programmatically retrieve and analyze their traffic data.",
-    },
+    
     {
       id: "ip-001",
       title: "Multi WAAP",
@@ -190,7 +183,15 @@ export const ROADMAP_DATA = {
     },
   ],
   released: [
-  {
+    {
+      id: "r-001",
+      title: "API key for Access Log",
+      date: "May 20th",
+      tag: "CDN",
+      description:
+        "Introduce API keys for secure access to CDN access logs, allowing customers to programmatically retrieve and analyze their traffic data.",
+    },
+    {
     id: "r-cdn-001",
     title: "BUG: Gcore HTTP3 not working",
     date: "Apr 2nd",
