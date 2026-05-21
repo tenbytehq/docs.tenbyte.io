@@ -28,11 +28,11 @@ export const ROADMAP_DATA = {
     },
     {
       id: "p-003",
-      title: "Encoder Queue Management",
+      title: "Multi Access Rule Capability",
       date: "Apr 7th",
-      tag: "Vidinfra",
+      tag: "CDN",
       description:
-        "Dashboard view to monitor, prioritize, pause, and cancel active encoding jobs across the account.",
+        "Allow multiple access rules (IP, referrer, country) to be applied simultaneously with independent enable/disable toggles for each rule type.",
     },
     {
       id: "p-004",
@@ -42,14 +42,7 @@ export const ROADMAP_DATA = {
       description:
         "Preserve 9:16 and other portrait aspect ratios through the transcoding pipeline instead of forcing 16:9 output.",
     },
-    {
-      id: "p-005",
-      title: "Billing System",
-      date: "Feb 15th",
-      tag: "Dashboard",
-      description:
-        "Unified billing infrastructure supporting multiple payment cycles, invoice generation, and usage-based charges across all products.",
-    },
+    
     {
       id: "p-006",
       title: "Razorpay Curlec PG Integration",
@@ -60,6 +53,14 @@ export const ROADMAP_DATA = {
     },
   ],
   inProgress: [
+    {
+      id: "ip-003",
+      title: "API key for Access Log",
+      date: "May 20th",
+      tag: "CDN",
+      description:
+        "Introduce API keys for secure access to CDN access logs, allowing customers to programmatically retrieve and analyze their traffic data.",
+    },
     {
       id: "ip-001",
       title: "Multi WAAP",
@@ -76,14 +77,8 @@ export const ROADMAP_DATA = {
       description:
         "Centralized log aggregation across all CDN zones with real-time streaming, filtering, and S3/HTTP export options.",
     },
-    {
-      id: "ip-003",
-      title: "SSL Auto Renew, Monitoring, Admin Notification + User Notification if self uploaded SSL",
-      date: "Feb 5th",
-      tag: "CDN",
-      description:
-        "Automatic renewal for managed certificates and expiry alerts for custom-uploaded SSL certs sent to both admins and end users.",
-    },
+    
+    
     {
       id: "ip-004",
       title: "Stream to Vidinfra",
@@ -117,14 +112,7 @@ export const ROADMAP_DATA = {
         "Simultaneously restream to multiple RTMP endpoints (YouTube, Twitch, custom) from a single ingest point.",
     },
     
-    {
-      id: "ip-008",
-      title: "Camera & Mic View",
-      date: "Feb 1st",
-      tag: "Webinar",
-      description:
-        "Both on stage joiner and host should have a view option to see the status of their camera and mic (on/off) in the Participant section.",
-    },
+    
     {
       id: "ip-009",
       title: "Recording Options",
@@ -235,11 +223,11 @@ export const ROADMAP_DATA = {
       "Real User Monitoring data is now sourced directly from edge telemetry, giving more accurate TTFB, FCP, and LCP metrics per region.",
   },
   {
-  id: "r-web-001",
-  title: "Network Health Indicator",
-  date: "Apr 5th",
-  tag: "Webinar",
-  description:
+    id: "r-web-001",
+    title: "Network Health Indicator",
+    date: "Apr 5th",
+    tag: "Webinar",
+    description:
     "Display a real-time connection quality indicator for each participant so hosts can identify attendees with poor network conditions during a session.",
   },
   {
