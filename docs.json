@@ -420,6 +420,13 @@
               "source": "https://raw.githubusercontent.com/vidinfra/open-api-docs/refs/heads/main/live-api.json",
               "directory": "api-reference"
             }
+          },
+          {
+              "group": "Livestream",
+              "openapi": {
+                "source": "https://raw.githubusercontent.com/vidinfra/open-api-docs/refs/heads/main/livestream-api.json",
+                "directory": "api-reference"
+              }
           }
         ]
       },
