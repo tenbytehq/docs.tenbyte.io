@@ -427,6 +427,13 @@
                 "source": "https://raw.githubusercontent.com/vidinfra/open-api-docs/refs/heads/main/livestream-api.json",
                 "directory": "api-reference"
               }
+          },
+          {
+            "group": "Cloud",
+            "openapi": {
+              "source": "https://raw.githubusercontent.com/vidinfra/open-api-docs/refs/heads/main/cloud-openapi.json",
+              "directory": "api-reference"
+            }
           }
         ]
       },
