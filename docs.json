@@ -431,7 +431,7 @@
           {
             "group": "Cloud",
             "openapi": {
-              "source": "https://raw.githubusercontent.com/vidinfra/open-api-docs/refs/heads/main/cloud-openapi.json",
+              "source": "https://raw.githubusercontent.com/vidinfra/open-api-docs/refs/heads/main/cloud-api.json",
               "directory": "api-reference"
             }
           }
