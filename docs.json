@@ -472,6 +472,9 @@
       "light": "#FD5B20"
     }
   },
+  "thumbnails": {
+    "background": "/images/og-bg.png"
+  },
 
   "navbar": {
     "links": [
