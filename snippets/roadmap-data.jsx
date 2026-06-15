@@ -3,7 +3,7 @@ export const ROADMAP_DATA = {
     "CDN",
     "Cloud",
     "Vidinfra",
-    "Webinar",
+    // "Webinar",
     "Live Stream",
     "Dashboard",
   ],
@@ -106,22 +106,22 @@ export const ROADMAP_DATA = {
     },
     
     
-    {
-      id: "ip-009",
-      title: "Recording Options",
-      date: "Feb 14th",
-      tag: "Webinar",
-      description:
-        "Two recording modes:\n1. Record Default – Users can choose to record or not; record button visible in live.\n2. Auto Recording – Recording starts automatically when live starts; record button visible.",
-    },
-    {
-      id: "ip-010",
-      title: "Host must assign co-host before leaving a live session",
-      date: "Feb 20th",
-      tag: "Webinar",
-      description:
-        "Prevent hosts from exiting a live session without first promoting another participant to co-host to avoid unmoderated rooms.",
-    },
+    // {
+    //   id: "ip-009",
+    //   title: "Recording Options",
+    //   date: "Feb 14th",
+    //   tag: "Webinar",
+    //   description:
+    //     "Two recording modes:\n1. Record Default – Users can choose to record or not; record button visible in live.\n2. Auto Recording – Recording starts automatically when live starts; record button visible.",
+    // },
+    // {
+    //   id: "ip-010",
+    //   title: "Host must assign co-host before leaving a live session",
+    //   date: "Feb 20th",
+    //   tag: "Webinar",
+    //   description:
+    //     "Prevent hosts from exiting a live session without first promoting another participant to co-host to avoid unmoderated rooms.",
+    // },
     {
       id: "ip-011",
       title: "Partner Program (Partner + Reseller)",
@@ -131,56 +131,56 @@ export const ROADMAP_DATA = {
         "Tiered partner portal supporting both referral partners and white-label resellers with separate dashboards, commission tracking, and sub-account management.",
     },
   
-    {
-      id: "ip-012",
-      title: "Picture-in-Picture Mode",
-      date: "Mar 1st",
-      tag: "Webinar",
-      description:
-        "Float the active speaker video in a resizable overlay so attendees can follow along while viewing shared content full-screen.",
-    },
-    {
-      id: "ip-013",
-      title: "Fullscreen Mode",
-      date: "Mar 1st",
-      tag: "Webinar",
-      description:
-        "One-click fullscreen for the main stage video, removing all UI chrome for immersive viewing on large displays.",
-    },
-    {
-      id: "ip-014",
-      title: "Logo upload option",
-      date: "Mar 8th",
-      tag: "Webinar",
-      description:
-        "Allow hosts to upload a brand logo displayed in the waiting room, session header, and recording watermark.",
-    },
+    // {
+    //   id: "ip-012",
+    //   title: "Picture-in-Picture Mode",
+    //   date: "Mar 1st",
+    //   tag: "Webinar",
+    //   description:
+    //     "Float the active speaker video in a resizable overlay so attendees can follow along while viewing shared content full-screen.",
+    // },
+    // {
+    //   id: "ip-013",
+    //   title: "Fullscreen Mode",
+    //   date: "Mar 1st",
+    //   tag: "Webinar",
+    //   description:
+    //     "One-click fullscreen for the main stage video, removing all UI chrome for immersive viewing on large displays.",
+    // },
+    // {
+    //   id: "ip-014",
+    //   title: "Logo upload option",
+    //   date: "Mar 8th",
+    //   tag: "Webinar",
+    //   description:
+    //     "Allow hosts to upload a brand logo displayed in the waiting room, session header, and recording watermark.",
+    // },
     
-    {
-      id: "ip-015",
-      title: "Pin Users",
-      date: "Mar 15th",
-      tag: "Webinar",
-      description:
-        "Hosts and co-hosts can pin a specific participant's video to the main stage regardless of who is currently speaking.",
-    },
-    {
-      id: "ip-016",
-      title: "File Sharing in the chat",
-      date: "Mar 15th",
-      tag: "Webinar",
-      description:
-        "Allow participants to upload and share files (PDF, images, ZIP) directly in the session chat panel with size limits enforced.",
-    },
+    // {
+    //   id: "ip-015",
+    //   title: "Pin Users",
+    //   date: "Mar 15th",
+    //   tag: "Webinar",
+    //   description:
+    //     "Hosts and co-hosts can pin a specific participant's video to the main stage regardless of who is currently speaking.",
+    // },
+    // {
+    //   id: "ip-016",
+    //   title: "File Sharing in the chat",
+    //   date: "Mar 15th",
+    //   tag: "Webinar",
+    //   description:
+    //     "Allow participants to upload and share files (PDF, images, ZIP) directly in the session chat panel with size limits enforced.",
+    // },
     
-    {
-      id: "ip-017",
-      title: "Max MBPS Restriction (RTMP mode)",
-      date: "Mar 22nd",
-      tag: "Webinar",
-      description:
-        "Let admins cap the ingest bitrate per RTMP session to prevent a single broadcaster from saturating shared bandwidth.",
-    },
+    // {
+    //   id: "ip-017",
+    //   title: "Max MBPS Restriction (RTMP mode)",
+    //   date: "Mar 22nd",
+    //   tag: "Webinar",
+    //   description:
+    //     "Let admins cap the ingest bitrate per RTMP session to prevent a single broadcaster from saturating shared bandwidth.",
+    // },
   ],
   released: [
     {
@@ -223,38 +223,38 @@ export const ROADMAP_DATA = {
     description:
       "Real User Monitoring data is now sourced directly from edge telemetry, giving more accurate TTFB, FCP, and LCP metrics per region.",
   },
-  {
-    id: "r-web-001",
-    title: "Network Health Indicator",
-    date: "Apr 5th",
-    tag: "Webinar",
-    description:
-    "Display a real-time connection quality indicator for each participant so hosts can identify attendees with poor network conditions during a session.",
-  },
-  {
-    id: "r-web-002",
-    title: "Rejoin Button",
-    date: "Apr 12th",
-    tag: "Webinar",
-    description:
-      "Add a one-click rejoin button on the post-session screen so participants can quickly re-enter a room if they accidentally disconnected.",
-  },
-  {
-    id: "r-web-003",
-    title: "Active speaker highlight & profile card for webinar",
-    date: "Apr 20th",
-    tag: "Webinar",
-    description:
-      "Highlight the currently speaking participant's tile with a visual border and show a profile card with their name and role on hover.",
-  },
-  {
-    id: "r-web-004",
-    title: "Host Mute All",
-    date: "Apr 28th",
-    tag: "Webinar",
-    description:
-      "Allow hosts to mute all participants simultaneously with a single action, with an optional setting to prevent attendees from unmuting themselves.",
-  },
+  // {
+  //   id: "r-web-001",
+  //   title: "Network Health Indicator",
+  //   date: "Apr 5th",
+  //   tag: "Webinar",
+  //   description:
+  //   "Display a real-time connection quality indicator for each participant so hosts can identify attendees with poor network conditions during a session.",
+  // },
+  // {
+  //   id: "r-web-002",
+  //   title: "Rejoin Button",
+  //   date: "Apr 12th",
+  //   tag: "Webinar",
+  //   description:
+  //     "Add a one-click rejoin button on the post-session screen so participants can quickly re-enter a room if they accidentally disconnected.",
+  // },
+  // {
+  //   id: "r-web-003",
+  //   title: "Active speaker highlight & profile card for webinar",
+  //   date: "Apr 20th",
+  //   tag: "Webinar",
+  //   description:
+  //     "Highlight the currently speaking participant's tile with a visual border and show a profile card with their name and role on hover.",
+  // },
+  // {
+  //   id: "r-web-004",
+  //   title: "Host Mute All",
+  //   date: "Apr 28th",
+  //   tag: "Webinar",
+  //   description:
+  //     "Allow hosts to mute all participants simultaneously with a single action, with an optional setting to prevent attendees from unmuting themselves.",
+  // },
   ],
 
   },
