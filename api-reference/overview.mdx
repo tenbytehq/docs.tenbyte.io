@@ -66,6 +66,19 @@ curl -X GET https://api.tenbyte.io/v1/cdn/distributions \
 > - If you need multiple environments (e.g., staging, production), create **separate API keys** for each.
 > - Monitor key activity in the **Tenbyte Console → API Logs** to detect unauthorized usage.
 
+---
+
+## 🤖 Using the API with AI agents
+
+Prefer to drive the Tenbyte API from an AI agent? Install the official [Tenbyte skill](https://github.com/tenbytehq/tenbyte-skill):
+
+```bash
+npx skills add tenbytehq/tenbyte-skill
+```
+
+Set your key as the `TENBYTE_API_KEY` environment variable and the agent can call the API on your behalf.
+
+---
 
 ## 🧩 Pagination
 

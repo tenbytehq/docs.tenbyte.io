@@ -48,7 +48,7 @@ Tenbyte is a cloud and video infrastructure provider running Tier III data cente
 
 ## Developer essentials
 
-<Columns cols={3}>
+<Columns cols={2}>
   <Card title="API Reference" icon="terminal" href="/api-reference/overview" arrow="true">
     OpenAPI specs for CDN, Vidinfra, and Live.
   </Card>
@@ -58,7 +58,38 @@ Tenbyte is a cloud and video infrastructure provider running Tier III data cente
   <Card title="SDKs" icon="file-code" href="/docs/vidinfra/sdk/uploader-sdk" arrow="true">
     Player and uploader SDKs for the web and mobile.
   </Card>
+  <Card title="AI Agents" icon="bot" href="#getting-started-for-ai-agents" arrow="true">
+    Drive Tenbyte from Claude and other agents with the Tenbyte skill.
+  </Card>
 </Columns>
+
+## Getting started for AI agents
+
+Tenbyte ships a [skill](https://github.com/tenbytehq/tenbyte-skill) that lets AI agents (Claude, Cursor, and other skill-aware tools) operate your Tenbyte products directly.
+
+<Steps>
+  <Step title="Add the skill">
+    Install it into your agent with a single command:
+
+    ```bash
+    npx skills add tenbytehq/tenbyte-skill
+    ```
+  </Step>
+  <Step title="Get your API key">
+    [Sign up](https://docs.tenbyte.io/docs/account/account-creation) or log in to the [Tenbyte Console](https://www.tenbyte.io/), then open **Organization → API Keys** to [create a personal API key](https://docs.tenbyte.io/docs/organization/api-keys).
+  </Step>
+  <Step title="Set the environment variable">
+    The skill only needs your API key in an environment variable to get started:
+
+    ```bash
+    TENBYTE_API_KEY=your-api-key
+    ```
+  </Step>
+</Steps>
+
+<Note>
+  Source code and documentation for the skill live in the [tenbyte-skill repository](https://github.com/tenbytehq/tenbyte-skill).
+</Note>
 
 ---
 
