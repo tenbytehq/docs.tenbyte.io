@@ -26,14 +26,7 @@ export const ROADMAP_DATA = {
       description:
         "Speech-to-text transcription for uploaded videos with support for multiple languages and downloadable SRT/VTT files.",
     },
-    {
-      id: "p-003",
-      title: "Multi Access Rule Capability",
-      date: "Apr 7th",
-      tag: "CDN",
-      description:
-        "Allow multiple access rules (IP, referrer, country) to be applied simultaneously with independent enable/disable toggles for each rule type.",
-    },
+    
     {
       id: "p-004",
       title: "Vertical Video Support & follow uploaded dimension",
@@ -45,23 +38,16 @@ export const ROADMAP_DATA = {
     
     {
       id: "p-006",
-      title: "Razorpay Curlec PG Integration",
+      title: "Stripe Payment Gateway Integration",
       date: "Mar 5th",
       tag: "Dashboard",
       description:
-        "Integrate Razorpay's Curlec payment gateway to support recurring payments and local payment methods for SEA customers.",
+        "Integrate Stripe's payment gateway to support recurring payments and local payment methods for SEA customers.",
     },
   ],
   inProgress: [
     
-    {
-      id: "ip-001",
-      title: "Multi WAAP",
-      date: "Jan 15th",
-      tag: "CDN",
-      description:
-        "Apply multiple Web Application and API Protection rule sets per pull zone with independent enable/disable toggles.",
-    },
+    
     {
       id: "ip-002",
       title: "Unified Log Management",
@@ -199,6 +185,22 @@ export const ROADMAP_DATA = {
     description:
       "Resolved an edge case where HTTP/3 connections were silently falling back to HTTP/1.1 on certain PoPs due to a misconfigured QUIC listener.",
   },
+  {
+      id: "r-cdn-003",
+      title: "Multi Access Rule Capability",
+      date: "Apr 7th",
+      tag: "CDN",
+      description:
+        "Allow multiple access rules (IP, referrer, country) to be applied simultaneously with independent enable/disable toggles for each rule type.",
+    },
+  {
+      id: "r-cdn-001",
+      title: "WAAP",
+      date: "Jan 15th",
+      tag: "CDN",
+      description:
+        "Apply multiple Web Application and API Protection rule sets per pull zone with independent enable/disable toggles.",
+    },
   {
     id: "r-cdn-002",
     title: "HTT2 & HTTP3 can be enabled together",
