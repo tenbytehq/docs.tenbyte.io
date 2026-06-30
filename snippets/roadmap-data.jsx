@@ -10,31 +10,62 @@ export const ROADMAP_DATA = {
   columns: {
     planned: [
     
-    {
-      id: "p-001",
-      title: "AI Chapter",
-      date: "Mar 3rd",
-      tag: "Vidinfra",
-      description:
-        "Automatically detect scene changes and topic shifts in VOD content to generate navigable chapter markers.",
-    },
-    {
-      id: "p-002",
-      title: "AI Transcription",
-      date: "Mar 17th",
-      tag: "Vidinfra",
-      description:
-        "Speech-to-text transcription for uploaded videos with support for multiple languages and downloadable SRT/VTT files.",
-    },
     
     {
       id: "p-004",
-      title: "Vertical Video Support & follow uploaded dimension",
+      title: "Square Video Support & follow uploaded dimension",
       date: "Apr 22nd",
       tag: "Vidinfra",
       description:
         "Preserve 9:16 and other portrait aspect ratios through the transcoding pipeline instead of forcing 16:9 output.",
     },
+
+    {
+      id: "p-005",
+      title: "Vertical Video Thumbnail Support",
+      date: "Apr 22nd",
+      tag: "Vidinfra",
+      description:
+        "Generate and display vertical video thumbnails for portrait aspect ratio content in the Vidinfra library and player.",
+    },
+
+    {
+      id: "p-007",
+      title: "Video Download Support",
+      date: "June 24th",
+      tag: "Vidinfra",
+      description:
+        "Allow users to download videos from the Vidinfra platform in best available resolution.",
+    },
+
+    {
+      id: "p-005",
+      title: "Audio Upload Support",
+      date: "June 13th",
+      tag: "Vidinfra",
+      description:
+        "Allow users to upload audio files to the Vidinfra platform for processing and playback.",
+    },
+
+    {
+      id: "p-008",
+      title: "Timestamp based Thumbnail Generation",
+      date: "June 28th",
+      tag: "Vidinfra",
+      description:
+        "Allow users to specify timestamps for thumbnail generation instead of relying on automatic frame selection.",
+    },
+
+    {
+      id: "p-009",
+      title: "SSL Replacement for CDN",
+      date: "June 30th",
+      tag: "CDN",
+      description:
+        "Replace existing SSL instead of Revoking and Reassigning SSL for CDN zones to avoid downtime during certificate replacement.",
+    },
+
+
     
     {
       id: "p-006",
@@ -46,15 +77,22 @@ export const ROADMAP_DATA = {
     },
   ],
   inProgress: [
-    
-    
+
+    {
+      id: "ip-001",
+      title: "AI Chapter",
+      date: "Mar 3rd",
+      tag: "Vidinfra",
+      description:
+        "Automatically detect scene changes and topic shifts in VOD content to generate navigable chapter markers.",
+    },
     {
       id: "ip-002",
-      title: "Unified Log Management",
-      date: "Jan 28th",
-      tag: "CDN",
+      title: "AI Transcription",
+      date: "Mar 17th",
+      tag: "Vidinfra",
       description:
-        "Centralized log aggregation across all CDN zones with real-time streaming, filtering, and S3/HTTP export options.",
+        "Speech-to-text transcription for uploaded videos with support for multiple languages and downloadable SRT/VTT files.",
     },
     
     
@@ -185,6 +223,16 @@ export const ROADMAP_DATA = {
     description:
       "Resolved an edge case where HTTP/3 connections were silently falling back to HTTP/1.1 on certain PoPs due to a misconfigured QUIC listener.",
   },
+
+  {
+      id: "r-cdn-003",
+      title: "Unified Log Management",
+      date: "Jan 28th",
+      tag: "CDN",
+      description:
+        "Centralized log aggregation across all CDN zones with real-time streaming, filtering, and S3/HTTP export options.",
+    },
+
   {
       id: "r-cdn-003",
       title: "Multi Access Rule Capability",
@@ -203,7 +251,7 @@ export const ROADMAP_DATA = {
     },
   {
     id: "r-cdn-002",
-    title: "HTT2 & HTTP3 can be enabled together",
+    title: "HTTP2 & HTTP3 can be enabled together",
     date: "Apr 18th",
     tag: "CDN",
     description:
