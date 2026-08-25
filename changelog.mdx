@@ -5,6 +5,82 @@ sidebarTitle: "Product Updates"
 icon: "arrow-up-down"
 ---
 
+<Update label="25 August 2026" description="Player improvements" tags={["Vidinfra Player", "Improvements", "Bug Fixes"]}>
+
+### Vidinfra Player — Embed Controls and Playback Reliability
+
+The player now handles embed configuration more consistently and avoids re-enabling controls that have been intentionally disabled.
+
+#### IMPROVED
+
+• **Embed configuration** — autoplay, controls, and preload query parameters are now read and applied correctly
+• **Playback performance** — media and iframe embeds on the Tenbyte website are deferred until they approach the viewport, reducing unnecessary initial loading
+
+#### FIXED
+
+• **Disabled controls returning after interaction** — tapping or hovering over the player no longer brings back controls that were configured to remain hidden
+
+</Update>
+
+
+<Update label="14 August 2026" description="v1.5.0" tags={["Live Streaming", "Improvements"]}>
+
+### Vidinfra Live — Major Update Streaming Engine
+
+Vidinfra Live now runs as a single native daemon with packaging, control, state, health, metrics, and admission control built in. This reduces moving parts while improving stream consistency and recovery.
+
+#### ADDED
+
+• **Integrated HLS and DASH packaging** — Shaka Packager now runs inside the daemon and owns manifest generation, producing standards-compliant playlists without subprocess or IPC overhead
+• **Three rate-control modes** — choose CBR for predictable bitrate, VBR for bitrate-targeted encoding with a VBV ceiling, or QVBR for quality-targeted encoding
+• **QVBR encoding** — set a quality target per rendition while keeping the VBV cap as a hard limit. Automatic classification can identify screen content and select an appropriate quality target
+• **Built-in operations** — REST API, operator console, SQLite state, automatic restart supervision, metrics, health checks, and multi-channel processing are included in one service
+
+#### IMPROVED
+
+• **Bandwidth efficiency** — QVBR delivered comparable quality to CBR in testing while using 37% fewer bits on a slide-lecture stream
+• **Adaptive bitrate switching** — renditions are IDR-aligned across the ladder, with independent segments declared for cleaner switching
+• **Stream recovery** — restarts preserve media sequence and segment numbering, preventing playback rewinds
+• **Timestamp handling** — corrected program-date-time behavior removes a source of AV sync warnings and playback stalls
+• **Colour consistency** — BT.709/BT.601, range, and transfer metadata are resolved from the source and signalled consistently across every rendition. HDR passes through unchanged
+
+</Update>
+
+
+<Update label="19 July 2026" description="Analytics improvements" tags={["Vidinfra Analytics", "Improvements", "Bug Fixes"]}>
+
+### Vidinfra Analytics — Better Playback Diagnostics
+
+Playback analytics now provide more useful ways to investigate viewing quality and playback failures.
+
+#### ADDED
+
+• **Richer filtering** — filter reports by operating system, browser, region, city, average watch time, and completed views
+• **Playback diagnostics** — client-side error details, network information, ASN data, and on-error probe results are available alongside playback incidents
+• **Incident references** — playback errors can be traced using clearer, shareable references and more complete error context
+
+#### IMPROVED
+
+• **Report accuracy** — aggregation and breakdowns now apply filters consistently and reconcile more reliably with total views
+• **Report performance** — caching, bounded database queries, concurrent report operations, and more efficient ingestion improve response times and stability
+
+</Update>
+
+
+<Update label="09 July 2026" description="v1.4.0" tags={["CDN", "AWS", "Improvements"]}>
+
+### CDN — AWS Multi-CDN Support
+
+AWS is now available as a new multi-CDN partner, giving customers another option for distributing content and building a more resilient delivery strategy.
+
+#### ADDED
+
+• **AWS CloudFront integration** — support for CloudFront edge functions and AWS S3 origins in CDN distribution workflows
+• **Expanded origin options** — use AWS-backed storage and delivery alongside existing CDN providers
+
+</Update>
+
+
 <Update label="30 June 2026" description="v1.2.0" tags={["CDN", "Bug Fixes"]}>
 
 ### CDN — Purge By Pattern

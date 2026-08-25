@@ -9,28 +9,9 @@ Tenbyte Image Optimization works with any framework or platform via URL-based tr
 
 ## How transforms work
 
-```mermaid
-flowchart LR
-    APP[Your app] -->|<img src=".../photo.jpg?width=800&format=auto">| EDGE[Tenbyte edge]
-    EDGE -->|cache miss| FETCH[Fetch master from origin]
-    FETCH -->|transform| VARIANT[Resize / convert / compress]
-    VARIANT -->|cache + serve| BROWSER[Browser]
-```
+Append query params to any image URL and the edge does the rest — resize, convert, compress — caching each variant independently after the first miss. See [How it works](/docs/cdn/distributions/image-optimizer#how-it-works) for the request path and cache-key behavior.
 
-Append query params, the edge does the rest. Each variant is cached independently after the first miss.
-
-## Common params
-
-| Param | Values | Purpose |
-|-------|--------|---------|
-| `width` / `w` | px | Resize. |
-| `height` / `h` | px | Resize. |
-| `format` / `fm` | `auto`, `webp`, `avif`, `jpeg`, `png` | Format conversion. |
-| `quality` / `q` | `1–100` | Compression. |
-| `dpr` | `1`, `2`, `3` | Device pixel ratio. |
-| `fit` | `cover`, `contain`, `fill`, `inside`, `outside` | Resize behavior. |
-
-See [Image Optimizer](/docs/cdn/distributions/image-optimizer) for the full param list and examples.
+Every guide below builds URLs from the same six params: `width` / `w`, `height` / `h`, `format` / `fm`, `quality` / `q`, `dpr`, and `fit`. The [Image Optimizer reference](/docs/cdn/distributions/image-optimizer#url-based-transforms) has the full table with accepted values and examples.
 
 ## Pick your stack
 
@@ -62,9 +43,8 @@ If `content-type` doesn't change to your requested format, the master file proba
 
 ## Dev-friendly checklist
 
-- [ ] Master image is high-quality JPEG or PNG. Don't upscale.
-- [ ] `format=auto` everywhere — covers AVIF / WebP / JPEG fallback.
-- [ ] Cap `width` to the breakpoints your design system actually uses.
-- [ ] Long TTL on image paths (see [cache rules](/docs/cdn/distributions/cache-rules)).
 - [ ] Lazy-load below-the-fold (`loading="lazy"` or framework-equivalent).
 - [ ] Test on real devices — `dpr=2` matters for Retina screens.
+- [ ] Cap the widths your loader can emit to the breakpoints your design system actually uses.
+
+For master-image, `format=auto`, and cache-TTL guidance, see [operational tips](/docs/cdn/distributions/image-optimizer#operational-tips).

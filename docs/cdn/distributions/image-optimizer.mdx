@@ -2,7 +2,7 @@
 title: 'Image Optimizer'
 description: 'Resize, convert, and compress images at the edge with URL-based transforms.'
 sidebarTitle: 'Image Optimizer'
-icon: 'wand-2'
+icon: 'wand-sparkles'
 ---
 
 Image Optimizer transforms images on the fly at the edge: resize, format conversion (WebP / AVIF), quality, crop, and more. You ship one master file to your origin and the CDN serves the perfect variant per device.
@@ -11,16 +11,28 @@ Image Optimizer transforms images on the fly at the edge: resize, format convers
 
 ```mermaid
 flowchart LR
-    BROWSER[Browser request<br/>?width=400&format=webp] --> EDGE[Tenbyte edge]
-    EDGE -->|cache miss| TRANSFORM[Transform pipeline]
-    TRANSFORM -->|fetch master| ORIGIN[Origin: original.jpg]
-    TRANSFORM --> CACHE[Cache variant]
-    CACHE --> BROWSER
+    APP[Your app] -->|"photo.jpg?width=800&format=auto"| EDGE[Tenbyte edge]
+    EDGE -->|cache miss| FETCH[Fetch master from origin]
+    FETCH -->|transform| VARIANT[Resize / convert / compress]
+    VARIANT -->|cache + serve| BROWSER[Browser]
 ```
 
 The query string is part of the cache key, so each variant is cached independently after the first miss.
 
 ## Enable Image Optimizer
+
+<Note>
+    Before turning Image Optimizer on, make sure you've completed the setup in our [Image Optimizer Integration Guide](/docs/cdn/image-optimization/integration-guide).
+</Note>
+
+<Warning>
+    **Read before you proceed**
+
+    - Images above **8,000 px** in width or height are not supported.
+    - Images above **50 MB** are not supported.
+    - Extensionless image URLs are not currently supported.
+    - IP-based origins require the [**Host Header**](/docs/cdn/distributions/headers#host-header) value.
+</Warning>
 
 <Frame caption="Turn on Image Optimizer">
     <img src="/images/cdn/31.png" alt="Image Optimizer" />
@@ -34,18 +46,27 @@ Click **Turn on Image Optimizer**. Once active:
 
 The status flips to **Image Optimizer is Active**. Transforms work immediately on any image path on this distribution.
 
+### Purge after enabling
+
+Anything cached before you turned the optimizer on is stored untransformed, and the edge keeps serving those copies until their TTL expires. Purge the image paths so the next request rebuilds them through the transform pipeline:
+
+- [Purge by pattern](/docs/cdn/purge/purge-by-pattern) — scope it to a prefix, e.g. `/photos/*`.
+- [Purge all](/docs/cdn/purge/purge-all) — when images are spread across the whole distribution.
+
 ## URL-based transforms
 
 Append query parameters to any image URL.
 
-| Parameter | Values | Example |
-|-----------|--------|---------|
-| `width` | px | `?width=800` |
-| `height` | px | `?height=600` |
-| `format` | `auto`, `webp`, `avif`, `jpeg`, `png` | `?format=webp` |
-| `quality` | `1–100` | `?quality=80` |
-| `fit` | `cover`, `contain`, `fill`, `inside`, `outside` | `?fit=cover` |
-| `dpr` | device pixel ratio | `?dpr=2` |
+| Parameter | Alias | Values | Example |
+|-----------|-------|--------|---------|
+| `width` | `w` | px | `?width=800` |
+| `height` | `h` | px | `?height=600` |
+| `format` | `fm` | `auto`, `webp`, `avif`, `jpeg`, `png` | `?format=webp` |
+| `quality` | `q` | `1–100` | `?quality=80` |
+| `fit` | — | `cover`, `contain`, `fill`, `inside`, `outside` | `?fit=cover` |
+| `dpr` | — | `1`, `2`, `3` | `?dpr=2` |
+
+Aliases are equivalent to their long form — `?w=800` and `?width=800` produce the same variant. The [framework guides](/docs/cdn/image-optimization/integration-guide) emit the short forms.
 
 Combine freely:
 

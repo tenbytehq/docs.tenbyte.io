@@ -235,7 +235,8 @@
                       "docs/cdn/distributions/access-rules/token-authentication"
                     ]
                   },
-                  "docs/cdn/distributions/cache-rules"
+                  "docs/cdn/distributions/cache-rules",
+                  "docs/cdn/distributions/image-optimizer"
                 ]
               },
               {
